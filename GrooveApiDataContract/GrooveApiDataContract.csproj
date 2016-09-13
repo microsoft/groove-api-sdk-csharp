@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5850FDBC-1778-4107-A7DF-C3E331E4BA6E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Groove.Api.DataContract</RootNamespace>
+    <AssemblyName>Microsoft.Groove.Api.DataContract</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="GrooveApiDataContract.nuspec" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AuthenticationDataContract\AzureDataMarketAuthenticationResponse.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="DataContract\Album.cs" />
+    <Compile Include="DataContract\Artist.cs" />
+    <Compile Include="DataContract\BaseResponse.cs" />
+    <Compile Include="DataContract\BrowseItemType.cs" />
+    <Compile Include="DataContract\CollectionEdit\ActionResult.cs" />
+    <Compile Include="DataContract\CollectionEdit\IPlaylistEditableMetadata.cs" />
+    <Compile Include="DataContract\CollectionEdit\PlaylistAction.cs" />
+    <Compile Include="DataContract\CollectionEdit\PlaylistActionResponse.cs" />
+    <Compile Include="DataContract\CollectionEdit\PlaylistActionResult.cs" />
+    <Compile Include="DataContract\CollectionEdit\PlaylistActionType.cs" />
+    <Compile Include="DataContract\CollectionEdit\TrackAction.cs" />
+    <Compile Include="DataContract\CollectionEdit\TrackActionRequest.cs" />
+    <Compile Include="DataContract\CollectionEdit\TrackActionResponse.cs" />
+    <Compile Include="DataContract\CollectionEdit\TrackActionResult.cs" />
+    <Compile Include="DataContract\CollectionEdit\TrackActionType.cs" />
+    <Compile Include="DataContract\CollectionState.cs" />
+    <Compile Include="DataContract\Content.cs" />
+    <Compile Include="DataContract\ContentItem.cs" />
+    <Compile Include="DataContract\ContentResponse.cs" />
+    <Compile Include="DataContract\Error.cs" />
+    <Compile Include="DataContract\ExtraDetails.cs" />
+    <Compile Include="DataContract\GenericCollections.cs" />
+    <Compile Include="DataContract\ItemType.cs" />
+    <Compile Include="DataContract\MediaNamespace.cs" />
+    <Compile Include="DataContract\OrderBy.cs" />
+    <Compile Include="DataContract\PaginatedList.cs" />
+    <Compile Include="DataContract\Playlist.cs" />
+    <Compile Include="DataContract\SearchFilter.cs" />
+    <Compile Include="DataContract\StreamResponse.cs" />
+    <Compile Include="DataContract\SubscriptionState.cs" />
+    <Compile Include="DataContract\Track.cs" />
+    <Compile Include="DataContract\TrackContainer.cs" />
+    <Compile Include="DataContract\UserProfileResponse.cs" />
+    <Compile Include="ErrorCode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\GrooveApiSamples\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
