@@ -23,9 +23,6 @@ namespace Microsoft.Groove.Api.DataContract
         public bool IsSubscriptionAvailableForPurchase { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public bool? IsPreTrialAvailable { get; set; }
-
-        [DataMember(EmitDefaultValue = false)]
         public string Culture { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
@@ -33,11 +30,5 @@ namespace Microsoft.Groove.Api.DataContract
 
         [DataMember(EmitDefaultValue = false)]
         public SubscriptionState Subscription { get; set; }
-
-        /// <summary>
-        /// Gets a token representing the last modification of the Recent Plays
-        /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public string RecentPlaysToken { get; set; }
     }
 }

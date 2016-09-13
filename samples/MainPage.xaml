@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:LoginButtonTextConverter x:Key="LoginButtonTextConverter"/>
+        <converters:SignInButtonTextConverter x:Key="SignInButtonTextConverter"/>
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -33,7 +33,7 @@
             <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
                 <Rectangle Fill="DarkGray" Height="2px" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
                 <TextBlock Text="{x:Bind Path=_userAccountManager.UserName, Mode=OneWay}" TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <Button Content="{x:Bind Path=_userAccountManager.UserIsLoggedIn, Mode=OneWay, Converter={StaticResource LoginButtonTextConverter}}" Click="LoginButton_Click" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
+                <Button Content="{x:Bind Path=_userAccountManager.UserIsLoggedIn, Mode=OneWay, Converter={StaticResource SignInButtonTextConverter}}" Click="SignInButton_Click" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
             </StackPanel>
         </Grid>
     </Grid>

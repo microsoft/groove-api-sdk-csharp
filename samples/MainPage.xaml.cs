@@ -37,10 +37,10 @@ namespace Microsoft.Groove.Api.Samples
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             AccountsSettingsPane.GetForCurrentView().AccountCommandsRequested += _userAccountManager.BuildAccountPaneAsync;
-            await _userAccountManager.LoginUserAccountSilentlyAsync();
+            await _userAccountManager.SignInUserAccountSilentlyAsync();
             if (_userAccountManager.UserIsLoggedIn)
             {
-                Debug.WriteLine("Successful silent login");
+                Debug.WriteLine("Successful silent sign-in");
             }
         }
 
@@ -49,13 +49,13 @@ namespace Microsoft.Groove.Api.Samples
             AccountsSettingsPane.GetForCurrentView().AccountCommandsRequested -= _userAccountManager.BuildAccountPaneAsync;
         }
 
-        private async void LoginButton_Click(object sender, RoutedEventArgs e)
+        private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
             ((Button)sender).IsEnabled = false;
 
             if (_userAccountManager.UserIsLoggedIn)
             {
-                await _userAccountManager.LogOutAccountAsync();
+                await _userAccountManager.SignOutAccountAsync();
             }
             else
             {

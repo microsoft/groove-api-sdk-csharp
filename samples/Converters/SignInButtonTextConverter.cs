@@ -10,20 +10,20 @@ namespace Microsoft.Groove.Api.Samples.Converters
     using System;
     using Windows.UI.Xaml.Data;
 
-    public class LoginButtonTextConverter : IValueConverter
+    public class SignInButtonTextConverter : IValueConverter
     {
-        private const string LogInText = "Log in";
-        private const string LogOutText = "Log out";
+        private const string SignInText = "Sign in";
+        private const string SignOutText = "Sign out";
 
-        // This converts the boolean indicating if the user is logged-in to a message to display on the login button
+        // This converts the boolean indicating if the user is signed-in to a message to display on the sign-in button
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is bool)
             {
-                return (bool) value ? LogOutText : LogInText;
+                return (bool) value ? SignOutText : SignInText;
             }
             
-            return LogInText;
+            return SignInText;
         }
 
         // No need to implement converting back on a one-way binding

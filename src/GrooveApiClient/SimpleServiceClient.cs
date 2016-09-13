@@ -59,8 +59,8 @@ namespace Microsoft.Groove.Api.Client
             Uri uri = BuildUri(hostname, relativeUri, requestParameters);
 
             using (HttpClient client = CreateClient(Timeout, extraHeaders))
+            using (HttpResponseMessage httpResponseMessage = await client.GetAsync(uri, cancellationToken))
             {
-                HttpResponseMessage httpResponseMessage = await client.GetAsync(uri, cancellationToken);
                 return await ParseResponseAsync<TResult, TErrorResult>(httpResponseMessage);
             }
 
@@ -104,8 +104,8 @@ namespace Microsoft.Groove.Api.Client
             using (MemoryStream stream = new MemoryStream())
             using (StreamWriter writer = new StreamWriter(stream))
             using (HttpContent content = CreateHttpContent(requestPayload, writer, stream))
+            using (HttpResponseMessage result = await client.PostAsync(uri, content, cancellationToken))
             {
-                HttpResponseMessage result = await client.PostAsync(uri, content, cancellationToken);
                 return await ParseResponseAsync<TResult, TErrorResult>(result);
             }
         }

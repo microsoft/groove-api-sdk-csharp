@@ -92,7 +92,7 @@ namespace Microsoft.Groove.Api.Samples
                 MicrosoftAccountProviderId,
                 ConsumerAuthority);
 
-            var command = new WebAccountProviderCommand(msaProvider, LoginUserAccountAsync);
+            var command = new WebAccountProviderCommand(msaProvider, SignInUserAccountAsync);
             e.WebAccountProviderCommands.Add(command);
 
             deferral.Complete();
@@ -102,7 +102,7 @@ namespace Microsoft.Groove.Api.Samples
         /// You shouldn't call this method directly. It's registered to the Account Pane, so it will be used as 
         /// a callback when you call AccountsSettingsPane.Show();
         /// </summary>
-        private async void LoginUserAccountAsync(WebAccountProviderCommand command)
+        private async void SignInUserAccountAsync(WebAccountProviderCommand command)
         {
             Stopwatch timer = Stopwatch.StartNew();
 
@@ -115,7 +115,7 @@ namespace Microsoft.Groove.Api.Samples
 
                 if (result.ResponseStatus == WebTokenRequestStatus.Success)
                 {
-                    Debug.WriteLine("Successful login");
+                    Debug.WriteLine("Successful sign-in");
 
                     WebAccount account = result.ResponseData[0].WebAccount;
 
@@ -135,22 +135,22 @@ namespace Microsoft.Groove.Api.Samples
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Login failure:");
+                Debug.WriteLine("Sign-in failure:");
                 Debug.WriteLine(e.ToString());
             }
             finally
             {
                 timer.Stop();
-                Debug.WriteLine($"Login took {timer.ElapsedMilliseconds}ms");
+                Debug.WriteLine($"Sign-in took {timer.ElapsedMilliseconds}ms");
             }
         }
 
         /// <summary>
-        /// Tries to login the user silently. It will fail if user action is required.
+        /// Tries to sign-in the user silently. It will fail if user action is required.
         /// In that case you'll need to fallback to using AccountsSettingsPane.Show();
         /// </summary>
-        /// <returns>True if login is successful.</returns>
-        public async Task<bool> LoginUserAccountSilentlyAsync()
+        /// <returns>True if sign-in is successful.</returns>
+        public async Task<bool> SignInUserAccountSilentlyAsync()
         {
             UserIsLoggedIn = false;
             UserName = string.Empty;
@@ -176,9 +176,9 @@ namespace Microsoft.Groove.Api.Samples
         }
 
         /// <summary>
-        /// Logs the current user out and clears his account information.
+        /// Signs the current user out and clears his account information.
         /// </summary>
-        public async Task LogOutAccountAsync()
+        public async Task SignOutAccountAsync()
         {
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey(CurrentUserKey))
             {
@@ -244,11 +244,6 @@ namespace Microsoft.Groove.Api.Samples
         /// </summary>
         private async Task<string> GetUserTokenAsync(WebAccount account, string scope, bool silentlyOnly)
         {
-            if (account?.WebAccountProvider == null)
-            {
-                return null;
-            }
-
             Stopwatch timer = Stopwatch.StartNew();
 
             try

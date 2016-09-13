@@ -10,6 +10,7 @@ namespace Microsoft.Groove.Api.Client
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using DataContract;
@@ -17,7 +18,16 @@ namespace Microsoft.Groove.Api.Client
 
     internal class GrooveClient : SimpleServiceClient, IGrooveClient
     {
-        private static readonly Uri Hostname = new Uri("https://api.media.microsoft.com");
+        private static readonly Uri Hostname;
+        private static readonly string ClientVersion;
+
+        static GrooveClient()
+        {
+            Hostname = new Uri("https://api.media.microsoft.com");
+            Assembly assembly = typeof(GrooveClient).GetTypeInfo().Assembly;
+            var assemblyName = new AssemblyName(assembly.FullName);
+            ClientVersion = assemblyName.Version.Major + "." + assemblyName.Version.Minor;
+        }
 
         private readonly AzureDataMarketAuthenticationCache _azureDataMarketAuthenticationCache;
 
@@ -356,7 +366,7 @@ namespace Microsoft.Groove.Api.Client
             Dictionary<string, string> headersToSend = new Dictionary<string, string>
             {
                 { "X-Client-Name", "GrooveClientSDK" },
-                { "X-Client-Version", "1" },
+                { "X-Client-Version", ClientVersion }
             };
 
             if (userToken != null)
