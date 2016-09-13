@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -26,6 +27,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{09965119-38F6-4441-A473-B86246B57719}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{09965119-38F6-4441-A473-B86246B57719}.Debug|Any CPU.Build.0 = Debug|x86
+		{09965119-38F6-4441-A473-B86246B57719}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{09965119-38F6-4441-A473-B86246B57719}.Debug|ARM.ActiveCfg = Debug|ARM
 		{09965119-38F6-4441-A473-B86246B57719}.Debug|ARM.Build.0 = Debug|ARM
 		{09965119-38F6-4441-A473-B86246B57719}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -36,6 +39,8 @@ Global
 		{09965119-38F6-4441-A473-B86246B57719}.Debug|x86.Build.0 = Debug|x86
 		{09965119-38F6-4441-A473-B86246B57719}.Debug|x86.Deploy.0 = Debug|x86
 		{09965119-38F6-4441-A473-B86246B57719}.Release|Any CPU.ActiveCfg = Release|x86
+		{09965119-38F6-4441-A473-B86246B57719}.Release|Any CPU.Build.0 = Release|x86
+		{09965119-38F6-4441-A473-B86246B57719}.Release|Any CPU.Deploy.0 = Release|x86
 		{09965119-38F6-4441-A473-B86246B57719}.Release|ARM.ActiveCfg = Release|ARM
 		{09965119-38F6-4441-A473-B86246B57719}.Release|ARM.Build.0 = Release|ARM
 		{09965119-38F6-4441-A473-B86246B57719}.Release|ARM.Deploy.0 = Release|ARM
