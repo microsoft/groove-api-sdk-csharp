@@ -1,0 +1,9 @@
+*.pfx
+.vs
+bin
+obj
+*.suo
+*.csproj.user
+Package.StoreAssociation.xml
+packages
+project.lock.json
