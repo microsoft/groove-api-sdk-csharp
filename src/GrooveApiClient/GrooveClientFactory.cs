@@ -42,9 +42,7 @@ namespace Microsoft.Groove.Api.Client
             string azureDataMarketClientId,
             string azureDataMarketClientSecret)
         {
-            return new GrooveClient(
-                GetOrAddAzureDataMarketAuthenticationCache(azureDataMarketClientId, azureDataMarketClientSecret), 
-                null);
+            return new GrooveClient(GetOrAddAzureDataMarketAuthenticationCache(azureDataMarketClientId, azureDataMarketClientSecret));
         }
 
         private static AzureDataMarketAuthenticationCache GetOrAddAzureDataMarketAuthenticationCache(

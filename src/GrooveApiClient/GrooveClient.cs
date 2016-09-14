@@ -32,9 +32,14 @@ namespace Microsoft.Groove.Api.Client
         private readonly AzureDataMarketAuthenticationCache _azureDataMarketAuthenticationCache;
         private readonly IUserTokenManager _userTokenManager;
 
-        internal GrooveClient(AzureDataMarketAuthenticationCache azureDataMarketAuthenticationCache, IUserTokenManager userTokenManager)
+        internal GrooveClient(AzureDataMarketAuthenticationCache azureDataMarketAuthenticationCache)
         {
             _azureDataMarketAuthenticationCache = azureDataMarketAuthenticationCache;
+        }
+
+        internal GrooveClient(AzureDataMarketAuthenticationCache azureDataMarketAuthenticationCache, IUserTokenManager userTokenManager)
+            : this(azureDataMarketAuthenticationCache)
+        {
             _userTokenManager = userTokenManager;
         }
 
