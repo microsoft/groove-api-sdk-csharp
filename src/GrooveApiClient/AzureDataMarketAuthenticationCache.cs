@@ -15,12 +15,12 @@ namespace Microsoft.Groove.Api.Client
     /// <summary>
     /// Basic Azure Data Market (http://datamarket.azure.com/) authentication cache
     /// </summary>
-    public class AzureDataMarketAuthenticationCache
+    public class AzureDataMarketAuthenticationCache : IDisposable
     {
         public class AccessToken
         {
             public string Token { get; set; }
-            public DateTime Expiration { get; set; }
+            public DateTimeOffset Expiration { get; set; }
         }
 
         private readonly string _clientId;
@@ -40,6 +40,11 @@ namespace Microsoft.Groove.Api.Client
             _clientSecret = clientSecret;
         }
 
+        public void Dispose()
+        {
+            _client.Dispose();
+        }
+
         /// <summary>
         /// Get the application's token. Renew it if needed.
         /// </summary>
@@ -47,18 +52,22 @@ namespace Microsoft.Groove.Api.Client
         /// <returns></returns>
         public async Task<AccessToken> CheckAndRenewTokenAsync(CancellationToken cancellationToken)
         {
-            if (_token == null || _token.Expiration < DateTime.UtcNow)
+            if (_token == null || _token.Expiration < DateTimeOffset.UtcNow)
             {
-                // TODO FIXME: thread safety
-                AzureDataMarketAuthenticationResponse authenticationResponse =
-                    await _client.AuthenticateAsync(_clientId, _clientSecret, cancellationToken);
+                // This is not thread safe. Unfortunately, portable class library requirements prevent use of
+                // asynchronous locking mechanisms. The risk here is authenticating multiple times in parallel
+                // which is bad from a performance standpoint but is transparent from a functional standpoint.
+                AzureDataMarketAuthenticationResponse authenticationResponse = await _client.AuthenticateAsync(
+                    _clientId, 
+                    _clientSecret, 
+                    cancellationToken);
+
                 if (authenticationResponse != null)
                 {
                     _token = new AccessToken
                     {
                         Token = authenticationResponse.AccessToken,
-                        Expiration =
-                            DateTime.UtcNow.Add(TimeSpan.FromSeconds(Convert.ToDouble(authenticationResponse.ExpiresIn)))
+                        Expiration = DateTimeOffset.UtcNow.AddSeconds(authenticationResponse.ExpiresIn)
                     };
                 }
             }

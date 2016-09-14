@@ -13,6 +13,8 @@ namespace Microsoft.Groove.Api.Client
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -20,15 +22,27 @@ namespace Microsoft.Groove.Api.Client
     /// <summary>
     /// Simple REST service client
     /// </summary>
-    public class SimpleServiceClient
+    public class SimpleServiceClient : IDisposable
     {
+        private static readonly AssemblyName AssemblyName = new AssemblyName(
+            typeof(SimpleServiceClient).GetTypeInfo().Assembly.FullName);
+
+        private static readonly ProductInfoHeaderValue UserAgent = new ProductInfoHeaderValue(
+            AssemblyName.Name, 
+            AssemblyName.Version.ToString());
+
         private readonly JsonSerializer _jsonSerializer = new JsonSerializer();
 
-        public TimeSpan Timeout { get; set; }
+        private readonly Lazy<HttpClient> _httpClient = new Lazy<HttpClient>(
+            () => CreateClient(DefaultTimeout),
+            LazyThreadSafetyMode.PublicationOnly);
 
-        public SimpleServiceClient()
+        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(60);
+
+        public TimeSpan Timeout
         {
-            Timeout = TimeSpan.FromSeconds(60);
+            get { return _httpClient.Value.Timeout; }
+            set { _httpClient.Value.Timeout = value; }
         }
 
         public class SimpleServiceResult<TResult, TErrorResult>
@@ -36,6 +50,14 @@ namespace Microsoft.Groove.Api.Client
             public TResult Result { get; set; }
             public TErrorResult ErrorResult { get; set; }
             public HttpStatusCode HttpStatusCode { get; set; }
+        }
+
+        public virtual void Dispose()
+        {
+            if (_httpClient.IsValueCreated)
+            {
+                _httpClient.Value.Dispose();
+            }
         }
 
         /// <summary>
@@ -48,8 +70,9 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="cancellationToken"></param>
         /// <param name="requestParameters">Optional query string parameters</param>
         /// <param name="extraHeaders">Optional HTTP headers</param>
-        /// <returns></returns>
-        public async Task<SimpleServiceResult<TResult, TErrorResult>> GetAsync<TResult, TErrorResult>(Uri hostname, string relativeUri,
+        public async Task<SimpleServiceResult<TResult, TErrorResult>> GetAsync<TResult, TErrorResult>(
+            Uri hostname,
+            string relativeUri,
             CancellationToken cancellationToken,
             IEnumerable<KeyValuePair<string, string>> requestParameters = null,
             IEnumerable<KeyValuePair<string, string>> extraHeaders = null)
@@ -58,22 +81,28 @@ namespace Microsoft.Groove.Api.Client
         {
             Uri uri = BuildUri(hostname, relativeUri, requestParameters);
 
-            using (HttpClient client = CreateClient(Timeout, extraHeaders))
-            using (HttpResponseMessage httpResponseMessage = await client.GetAsync(uri, cancellationToken))
+            using (HttpRequestMessage httpRequestMessage = CreateHttpRequest(HttpMethod.Get, uri, null, extraHeaders))
+            using (HttpResponseMessage httpResponseMessage = await _httpClient.Value.SendAsync(httpRequestMessage, cancellationToken))
             {
                 return await ParseResponseAsync<TResult, TErrorResult>(httpResponseMessage);
             }
-
         }
 
-        public async Task<TResult> GetAsync<TResult>(Uri hostname, string relativeUri,
+        public async Task<TResult> GetAsync<TResult>(
+            Uri hostname, 
+            string relativeUri,
             CancellationToken cancellationToken,
             IEnumerable<KeyValuePair<string, string>> requestParameters = null,
             IEnumerable<KeyValuePair<string, string>> extraHeaders = null)
             where TResult : class
         {
-            SimpleServiceResult<TResult, TResult> result =
-                await GetAsync<TResult, TResult>(hostname, relativeUri, cancellationToken, requestParameters, extraHeaders);
+            SimpleServiceResult<TResult, TResult> result = await GetAsync<TResult, TResult>(
+                hostname, 
+                relativeUri, 
+                cancellationToken, 
+                requestParameters, 
+                extraHeaders);
+
             return result.Result ?? result.ErrorResult;
         }
 
@@ -89,8 +118,9 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="cancellationToken"></param>
         /// <param name="requestParameters">Optional query string parameters</param>
         /// <param name="extraHeaders">Optional HTTP headers</param>
-        /// <returns></returns>
-        public async Task<SimpleServiceResult<TResult, TErrorResult>> PostAsync<TResult, TErrorResult, TRequest>(Uri hostname, string relativeUri,
+        public async Task<SimpleServiceResult<TResult, TErrorResult>> PostAsync<TResult, TErrorResult, TRequest>(
+            Uri hostname, 
+            string relativeUri,
             TRequest requestPayload,
             CancellationToken cancellationToken,
             IEnumerable<KeyValuePair<string, string>> requestParameters = null,
@@ -100,11 +130,11 @@ namespace Microsoft.Groove.Api.Client
         {
             Uri uri = BuildUri(hostname, relativeUri, requestParameters);
 
-            using (HttpClient client = CreateClient(Timeout, extraHeaders))
             using (MemoryStream stream = new MemoryStream())
             using (StreamWriter writer = new StreamWriter(stream))
             using (HttpContent content = CreateHttpContent(requestPayload, writer, stream))
-            using (HttpResponseMessage result = await client.PostAsync(uri, content, cancellationToken))
+            using (HttpRequestMessage requestMessage = CreateHttpRequest(HttpMethod.Post, uri, content, extraHeaders))
+            using (HttpResponseMessage result = await _httpClient.Value.SendAsync(requestMessage, cancellationToken))
             {
                 return await ParseResponseAsync<TResult, TErrorResult>(result);
             }
@@ -118,24 +148,37 @@ namespace Microsoft.Groove.Api.Client
             IEnumerable<KeyValuePair<string, string>> extraHeaders = null)
             where TResult : class
         {
-            SimpleServiceResult<TResult, TResult> result =
-                await PostAsync<TResult, TResult, TRequest>(hostname, relativeUri, requestPayload, cancellationToken, requestParameters, extraHeaders);
+            SimpleServiceResult<TResult, TResult> result = await PostAsync<TResult, TResult, TRequest>(
+                hostname, 
+                relativeUri, 
+                requestPayload, 
+                cancellationToken, 
+                requestParameters, 
+                extraHeaders);
+
             return result.Result ?? result.ErrorResult;
         }
 
-        private static Uri BuildUri(Uri hostname, string relativeUri, IEnumerable<KeyValuePair<string, string>> requestParameters)
+        private static Uri BuildUri(
+            Uri hostname, 
+            string relativeUri, 
+            IEnumerable<KeyValuePair<string, string>> requestParameters)
         {
             string relUri = requestParameters == null
                 ? relativeUri
                 : requestParameters.Aggregate(relativeUri,
                     (current, param) => current + (current.Contains("?") ? "&" : "?") + param.Key + "=" + param.Value);
+
             return new Uri(hostname, relUri);
         }
 
-        private static HttpClient CreateClient(TimeSpan timeout, IEnumerable<KeyValuePair<string, string>> extraHeaders)
+        private static HttpClient CreateClient(
+            TimeSpan timeout, 
+            IEnumerable<KeyValuePair<string, string>> extraHeaders = null)
         {
-            var client = new HttpClient();
+            var client = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip });
             client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.DefaultRequestHeaders.UserAgent.Add(UserAgent);
             client.Timeout = timeout;
 
             if (extraHeaders != null)
@@ -145,10 +188,13 @@ namespace Microsoft.Groove.Api.Client
                     client.DefaultRequestHeaders.Add(header.Key, header.Value);
                 }
             }
+
             return client;
         }
 
-        protected virtual HttpContent CreateHttpContent<TRequest>(TRequest requestPayload, StreamWriter writer,
+        protected virtual HttpContent CreateHttpContent<TRequest>(
+            TRequest requestPayload, 
+            StreamWriter writer,
             MemoryStream stream)
         {
             _jsonSerializer.Serialize(writer, requestPayload, typeof(TRequest));
@@ -157,6 +203,29 @@ namespace Microsoft.Groove.Api.Client
             HttpContent content = new StreamContent(stream);
             content.Headers.Add("Content-Type", "application/json");
             return content;
+        }
+
+        private static HttpRequestMessage CreateHttpRequest(
+            HttpMethod method, 
+            Uri uri, 
+            HttpContent content,
+            IEnumerable<KeyValuePair<string, string>> extraHeaders)
+        {
+            HttpRequestMessage message = new HttpRequestMessage(method, uri);
+            if (content != null)
+            {
+                message.Content = content;
+            }
+
+            if (extraHeaders != null)
+            {
+                foreach (var header in extraHeaders)
+                {
+                    message.Headers.Add(header.Key, header.Value);
+                }
+            }
+
+            return message;
         }
 
         private async Task<SimpleServiceResult<TResult, TErrorResult>> ParseResponseAsync<TResult, TErrorResult>(HttpResponseMessage message)
@@ -170,6 +239,7 @@ namespace Microsoft.Groove.Api.Client
                     HttpStatusCode = message.StatusCode
                 };
             }
+
             using (Stream stream = await message.Content.ReadAsStreamAsync())
             {
                 using (StreamReader reader = new StreamReader(stream))
@@ -184,7 +254,7 @@ namespace Microsoft.Groove.Api.Client
                             message.IsSuccessStatusCode
                                 ? null
                                 : _jsonSerializer.Deserialize(reader, typeof(TErrorResult)) as TErrorResult,
-                        HttpStatusCode = message.StatusCode,
+                        HttpStatusCode = message.StatusCode
                     };
                 }
             }

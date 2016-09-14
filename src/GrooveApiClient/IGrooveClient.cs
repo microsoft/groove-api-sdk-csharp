@@ -13,7 +13,7 @@ namespace Microsoft.Groove.Api.Client
     using DataContract;
     using DataContract.CollectionEdit;
 
-    public interface IGrooveClient
+    public interface IGrooveClient : IDisposable
     {
         /// <summary>
         /// Timeout applied to all backend service calls.
@@ -110,6 +110,7 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="mediaNamespace">"music" only for now.</param>
         /// <param name="source">A ContentSource value. Only Collection for now</param>
         /// <param name="type">The item type you want to browse</param>
+        /// <param name="genre">Filter to a specific genre.</param>
         /// <param name="orderBy">Specify how results are ordered.</param>
         /// <param name="maxItems">Max items per category in the response, between 1 and 25. Default value is 25.</param>
         /// <param name="page">Go directly to a given page. Page size is maxItems.</param>
@@ -120,6 +121,7 @@ namespace Microsoft.Groove.Api.Client
             MediaNamespace mediaNamespace, 
             ContentSource source, 
             ItemType type,
+            string genre = null,
             OrderBy? orderBy = null, 
             int? maxItems = null, 
             int? page = null, 
@@ -138,6 +140,46 @@ namespace Microsoft.Groove.Api.Client
             MediaNamespace mediaNamespace, 
             ContentSource source, 
             ItemType type,
+            string continuationToken);
+
+        /// <summary>
+        /// Browse sub elements of the catalog or your collection
+        /// </summary>
+        /// <param name="id">Id of the parent item to browse.</param>
+        /// <param name="source">A ContentSource value. Only Collection for now</param>
+        /// <param name="browseType">The item type you want to browse</param>
+        /// <param name="extra">The extra details to browse.</param>
+        /// <param name="orderBy">Specify how results are ordered.</param>
+        /// <param name="maxItems">Max items per category in the response, between 1 and 25. Default value is 25.</param>
+        /// <param name="page">Go directly to a given page. Page size is maxItems.</param>
+        /// <param name="language">ISO 2 letter code.</param>
+        /// <param name="country">ISO 2 letter code.</param>
+        /// <returns>Content response with the items corresponding to the sub-browse request.</returns>
+        Task<ContentResponse> SubBrowseAsync(
+            string id, 
+            ContentSource source, 
+            BrowseItemType browseType, 
+            ExtraDetails extra,
+            OrderBy? orderBy = null, 
+            int? maxItems = null, 
+            int? page = null, 
+            string language = null,
+            string country = null);
+
+        /// <summary>
+        /// Request the continuation of an incomplete sub browse
+        /// </summary>
+        /// <param name="id">Id of the parent item to browse.</param>
+        /// <param name="source">A ContentSource value. Only Collection for now</param>
+        /// <param name="browseType">The item type you want to browse</param>
+        /// <param name="extra">The extra details to browse.</param>
+        /// <param name="continuationToken">A Continuation Token provided in an earlier service response.</param>
+        /// <returns>Content response with the items corresponding to the sub-browse request.</returns>
+        Task<ContentResponse> SubBrowseContinuationAsync(
+            string id, 
+            ContentSource source, 
+            BrowseItemType browseType,
+            ExtraDetails extra, 
             string continuationToken);
 
         /// <summary>
@@ -222,6 +264,18 @@ namespace Microsoft.Groove.Api.Client
         Task<StreamResponse> PreviewAsync(
             string id, 
             string clientInstanceId, 
+            string country = null);
+
+        /// <summary>
+        /// Gets the user's profile
+        /// </summary>
+        /// <param name="mediaNamespace">"music" only for now.</param>
+        /// <param name="language">ISO 2 letter code</param>
+        /// <param name="country">ISO 2 letter code</param>
+        /// <returns></returns>
+        Task<UserProfileResponse> GetUserProfileAsync(
+            MediaNamespace mediaNamespace, 
+            string language = null, 
             string country = null);
     }
 }

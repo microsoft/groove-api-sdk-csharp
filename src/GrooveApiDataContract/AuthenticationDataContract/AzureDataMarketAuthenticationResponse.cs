@@ -17,7 +17,7 @@ namespace Microsoft.Groove.Api.DataContract.Authentication
         [DataMember(Name = "access_token", EmitDefaultValue = false)]
         public string AccessToken { get; set; }
         [DataMember(Name = "expires_in", EmitDefaultValue = false)]
-        public string ExpiresIn { get; set; }
+        public double ExpiresIn { get; set; }
         [DataMember(Name = "scope", EmitDefaultValue = false)]
         public string Scope { get; set; }
         [DataMember(Name = "error", EmitDefaultValue = false)]
