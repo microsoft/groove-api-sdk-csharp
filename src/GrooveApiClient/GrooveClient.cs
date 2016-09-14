@@ -30,10 +30,12 @@ namespace Microsoft.Groove.Api.Client
         }
 
         private readonly AzureDataMarketAuthenticationCache _azureDataMarketAuthenticationCache;
+        private readonly IUserTokenManager _userTokenManager;
 
-        internal GrooveClient(string azureDataMarketClientId, string azureDataMarketClientSecret)
+        internal GrooveClient(string azureDataMarketClientId, string azureDataMarketClientSecret, IUserTokenManager userTokenManager)
         {
             _azureDataMarketAuthenticationCache = new AzureDataMarketAuthenticationCache(azureDataMarketClientId, azureDataMarketClientSecret);
+            _userTokenManager = userTokenManager;
         }
 
         private async Task<ContentResponse> SearchApiAsync(
@@ -46,9 +48,8 @@ namespace Microsoft.Groove.Api.Client
             string country = null,
             int? maxItems = null, 
             string continuationToken = null,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            Dictionary<string, string> requestHeaders = FormatRequestHeadersAsync(userToken);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(continuationToken, language, country, source);
 
             if (!string.IsNullOrEmpty(query))
@@ -60,12 +61,27 @@ namespace Microsoft.Groove.Api.Client
             if (maxItems.HasValue)
                 requestParameters.Add("maxItems", maxItems.ToString());
 
-            return await GetAsync<ContentResponse>(
-                Hostname, 
-                "/1/content/" + mediaNamespace + "/search",
-                new CancellationToken(false), 
-                requestParameters,
-                requestHeaders);
+            if (withUserToken)
+            {
+                return await ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                    headers => GetAsync<ContentResponse>(
+                        Hostname,
+                        "/1/content/" + mediaNamespace + "/search",
+                        new CancellationToken(false),
+                        requestParameters,
+                        headers));
+            }
+            else
+            {
+                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+
+                return await GetAsync<ContentResponse>(
+                    Hostname,
+                    "/1/content/" + mediaNamespace + "/search",
+                    new CancellationToken(false),
+                    requestParameters,
+                    requestHeaders);
+            }
         }
 
         private async Task<ContentResponse> LookupApiAsync(
@@ -75,10 +91,10 @@ namespace Microsoft.Groove.Api.Client
             string country = null, 
             ExtraDetails extras = ExtraDetails.None,
             string continuationToken = null,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            Dictionary<string, string> requestHeaders = FormatRequestHeadersAsync(userToken);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(continuationToken, language, country, source);
+
             if (extras != ExtraDetails.None)
             {
                 string extra = extras.ToString().Replace(", ", "+");
@@ -89,12 +105,26 @@ namespace Microsoft.Groove.Api.Client
                 (current, id) =>
                     current + (!string.IsNullOrEmpty(current) ? "+" : "") + id);
 
-            return await GetAsync<ContentResponse>(
-                Hostname, 
-                "/1/content/" + ids + "/lookup", 
-                new CancellationToken(false), 
-                requestParameters,
-                requestHeaders);
+            if (withUserToken)
+            {
+                return await ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                    headers => GetAsync<ContentResponse>(
+                        Hostname,
+                        "/1/content/" + ids + "/lookup",
+                        new CancellationToken(false),
+                        requestParameters,
+                        headers));
+            }
+            else
+            {
+                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+                return await GetAsync<ContentResponse>(
+                    Hostname,
+                    "/1/content/" + ids + "/lookup",
+                    new CancellationToken(false),
+                    requestParameters,
+                    requestHeaders);
+            }
         }
 
         private async Task<ContentResponse> BrowseApiAsync(
@@ -107,9 +137,8 @@ namespace Microsoft.Groove.Api.Client
             string country = null, 
             string language = null, 
             string continuationToken = null,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            Dictionary<string, string> requestHeaders = FormatRequestHeadersAsync(userToken);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(continuationToken, language, country);
 
             if (orderBy.HasValue)
@@ -121,12 +150,26 @@ namespace Microsoft.Groove.Api.Client
             if (page.HasValue)
                 requestParameters.Add("page", page.ToString());
 
-            return await GetAsync<ContentResponse>(
-                Hostname,
-                "/1/content/" + mediaNamespace + "/" + source + "/" + type + "/browse",
-                new CancellationToken(false), 
-                requestParameters,
-                requestHeaders);
+            if (withUserToken)
+            {
+                return await ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                    headers => GetAsync<ContentResponse>(
+                        Hostname,
+                        "/1/content/" + mediaNamespace + "/" + source + "/" + type + "/browse",
+                        new CancellationToken(false),
+                        requestParameters,
+                        headers));
+            }
+            else
+            {
+                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+                return await GetAsync<ContentResponse>(
+                    Hostname,
+                    "/1/content/" + mediaNamespace + "/" + source + "/" + type + "/browse",
+                    new CancellationToken(false),
+                    requestParameters,
+                    requestHeaders);
+            }
         }
 
         private async Task<ContentResponse> DiscoverAsync(
@@ -136,7 +179,7 @@ namespace Microsoft.Groove.Api.Client
             string language = null, 
             string genre = null)
         {
-            Dictionary<string, string> requestHeaders = FormatRequestHeadersAsync(null);
+            Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(language: language, country: country);
 
             if (!string.IsNullOrEmpty(genre))
@@ -155,20 +198,33 @@ namespace Microsoft.Groove.Api.Client
             string clientInstanceId,
             string type, 
             string country = null, 
-            string userToken = null)
+            bool withUserToken = false)
         {
-            Dictionary<string, string> requestHeaders = FormatRequestHeadersAsync(userToken);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(country: country);
 
             if (!string.IsNullOrEmpty(clientInstanceId))
                 requestParameters.Add("clientInstanceId", clientInstanceId);
 
-            return await GetAsync<StreamResponse>(
-                Hostname, 
-                "/1/content/" + id + "/" + type, 
-                new CancellationToken(false),
-                requestParameters, 
-                requestHeaders);
+            if (withUserToken)
+            {
+                return await ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                    headers => GetAsync<StreamResponse>(
+                        Hostname,
+                        "/1/content/" + id + "/" + type,
+                        new CancellationToken(false),
+                        requestParameters,
+                        headers));
+            }
+            else
+            {
+                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+                return await GetAsync<StreamResponse>(
+                    Hostname,
+                    "/1/content/" + id + "/" + type,
+                    new CancellationToken(false),
+                    requestParameters,
+                    requestHeaders);
+            }
         }
 
         public Task<ContentResponse> SearchAsync(
@@ -179,17 +235,17 @@ namespace Microsoft.Groove.Api.Client
             string language = null, 
             string country = null, 
             int? maxItems = null,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            return SearchApiAsync(mediaNamespace, query, source, filter, language, country, maxItems, userToken: userToken);
+            return SearchApiAsync(mediaNamespace, query, source, filter, language, country, maxItems, withUserToken: withUserToken);
         }
 
         public Task<ContentResponse> SearchContinuationAsync(
             MediaNamespace mediaNamespace, 
             string continuationToken,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            return SearchApiAsync(mediaNamespace, continuationToken: continuationToken, userToken: userToken);
+            return SearchApiAsync(mediaNamespace, continuationToken: continuationToken, withUserToken: withUserToken);
         }
 
         public Task<ContentResponse> LookupAsync(
@@ -198,9 +254,9 @@ namespace Microsoft.Groove.Api.Client
             string language = null,
             string country = null, 
             ExtraDetails extras = ExtraDetails.None,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            return LookupApiAsync(itemIds, source, language, country, extras, userToken: userToken);
+            return LookupApiAsync(itemIds, source, language, country, extras, withUserToken: withUserToken);
         }
 
         public Task<ContentResponse> LookupAsync(
@@ -209,25 +265,25 @@ namespace Microsoft.Groove.Api.Client
             string language = null,
             string country = null,
             ExtraDetails extras = ExtraDetails.None,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            return LookupApiAsync(new List<string> {itemId}, source, language, country, extras, userToken: userToken);
+            return LookupApiAsync(new List<string> {itemId}, source, language, country, extras, withUserToken: withUserToken);
         }
 
         public Task<ContentResponse> LookupContinuationAsync(
             List<string> itemIds, 
             string continuationToken,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            return LookupApiAsync(itemIds, continuationToken: continuationToken, userToken: userToken);
+            return LookupApiAsync(itemIds, continuationToken: continuationToken, withUserToken: withUserToken);
         }
 
         public Task<ContentResponse> LookupContinuationAsync(
             string itemId,
             string continuationToken,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            return LookupApiAsync(new List<string> {itemId}, continuationToken: continuationToken, userToken: userToken);
+            return LookupApiAsync(new List<string> {itemId}, continuationToken: continuationToken, withUserToken: withUserToken);
         }
 
         public Task<ContentResponse> BrowseAsync(
@@ -239,9 +295,9 @@ namespace Microsoft.Groove.Api.Client
             int? page = null, 
             string country = null,
             string language = null,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            return BrowseApiAsync(mediaNamespace, source, type, orderBy, maxItems, page, country, language, userToken: userToken);
+            return BrowseApiAsync(mediaNamespace, source, type, orderBy, maxItems, page, country, language, withUserToken: withUserToken);
         }
 
         public Task<ContentResponse> BrowseContinuationAsync(
@@ -249,9 +305,9 @@ namespace Microsoft.Groove.Api.Client
             ContentSource source, 
             ItemType type,
             string continuationToken,
-            string userToken = null)
+            bool withUserToken = false)
         {
-            return BrowseApiAsync(mediaNamespace, source, type, continuationToken: continuationToken, userToken: userToken);
+            return BrowseApiAsync(mediaNamespace, source, type, continuationToken: continuationToken, withUserToken: withUserToken);
         }
 
         public Task<ContentResponse> SpotlightApiAsync(
@@ -287,39 +343,42 @@ namespace Microsoft.Groove.Api.Client
         public async Task<TrackActionResponse> CollectionOperationAsync(
             MediaNamespace mediaNamespace, 
             TrackActionType operation, 
-            TrackActionRequest trackActionRequest,
-            string userToken = null)
+            TrackActionRequest trackActionRequest)
         {
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync();
-            return await PostAsync<TrackActionResponse, TrackActionRequest>(
-                Hostname, 
-                "/1/content/" + mediaNamespace + "/collection/" + operation,
-                trackActionRequest, 
-                new CancellationToken(false), 
-                requestParameters);
+
+            return await ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                headers => PostAsync<TrackActionResponse, TrackActionRequest>(
+                    Hostname,
+                    "/1/content/" + mediaNamespace + "/collection/" + operation,
+                    trackActionRequest,
+                    new CancellationToken(false),
+                    requestParameters,
+                    headers));
         }
 
         public async Task<PlaylistActionResponse> PlaylistOperationAsync(
             MediaNamespace mediaNamespace, 
             PlaylistActionType operation,
-            PlaylistAction playlistAction,
-            string userToken = null)
+            PlaylistAction playlistAction)
         {
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync();
-            return await PostAsync<PlaylistActionResponse, PlaylistAction>(
-                Hostname, 
-                "/1/content/" + mediaNamespace + "/collection/playlists/" + operation,
-                playlistAction, 
-                new CancellationToken(false), 
-                requestParameters);
+
+            return await ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                headers => PostAsync<PlaylistActionResponse, PlaylistAction>(
+                    Hostname,
+                    "/1/content/" + mediaNamespace + "/collection/playlists/" + operation,
+                    playlistAction,
+                    new CancellationToken(false),
+                    requestParameters,
+                    headers));
         }
 
         public Task<StreamResponse> StreamAsync(
             string id, 
-            string clientInstanceId, 
-            string userToken)
+            string clientInstanceId)
         {
-            return LocationAsync(id, clientInstanceId, "stream", userToken: userToken);
+            return LocationAsync(id, clientInstanceId, "stream", withUserToken: true);
         }
 
         public Task<StreamResponse> PreviewAsync(
@@ -328,6 +387,26 @@ namespace Microsoft.Groove.Api.Client
             string country = null)
         {
             return LocationAsync(id, clientInstanceId, "preview", country);
+        }
+
+        private async Task<TResponse> ApiCallWithUserAuthorizationHeaderRefreshAsync<TResponse>(
+            Func<Dictionary<string, string>, Task<TResponse>> apiCall)
+            where TResponse : BaseResponse
+        {
+            string userAuthorizationHeader = await _userTokenManager.GetUserAuthorizationHeaderAsync();
+            Dictionary<string, string> requestHeaders = FormatRequestHeaders(userAuthorizationHeader);
+
+            TResponse response = await apiCall(requestHeaders);
+
+            if (response.Error?.ErrorCode == ErrorCode.INVALID_AUTHORIZATION_HEADER.ToString("G"))
+            {
+                userAuthorizationHeader = await _userTokenManager.GetUserAuthorizationHeaderAsync(true);
+                requestHeaders = FormatRequestHeaders(userAuthorizationHeader);
+
+                response = await apiCall(requestHeaders);
+            }
+
+            return response;
         }
 
         private async Task<Dictionary<string, string>> FormatRequestParametersAsync(
@@ -361,7 +440,7 @@ namespace Microsoft.Groove.Api.Client
             return requestParameters;
         }
 
-        private static Dictionary<string, string> FormatRequestHeadersAsync(string userToken)
+        private static Dictionary<string, string> FormatRequestHeaders(string userAuthorizationHeader)
         {
             Dictionary<string, string> headersToSend = new Dictionary<string, string>
             {
@@ -369,9 +448,9 @@ namespace Microsoft.Groove.Api.Client
                 { "X-Client-Version", ClientVersion }
             };
 
-            if (userToken != null)
+            if (userAuthorizationHeader != null)
             {
-                headersToSend.Add("Authorization", $"Bearer {userToken}");
+                headersToSend.Add("Authorization", userAuthorizationHeader);
             }
 
             return headersToSend;

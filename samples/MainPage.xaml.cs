@@ -8,7 +8,6 @@ namespace Microsoft.Groove.Api.Samples
 {
     using System;
     using System.Diagnostics;
-    using System.Threading.Tasks;
     using Windows.UI.ApplicationSettings;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -31,7 +30,7 @@ namespace Microsoft.Groove.Api.Samples
             InitializeComponent();
 
             _userAccountManager = new UserAccountManagerWithNotifications();
-            _grooveClient = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret);
+            _grooveClient = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret, _userAccountManager);
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -73,7 +72,7 @@ namespace Microsoft.Groove.Api.Samples
                 "music.B13EB907-0100-11DB-89CA-0019B92A3933", 
                 ContentSource.Catalog);
 
-            await HandleGrooveApiErrorAsync(lookupResponse.Error);
+            HandleGrooveApiError(lookupResponse.Error);
 
             ((Button)sender).IsEnabled = true;
         }
@@ -84,15 +83,11 @@ namespace Microsoft.Groove.Api.Samples
 
             if (_userAccountManager.UserIsLoggedIn)
             {
-                string userToken = await _userAccountManager.GetUserTokenAsync(
-                    UserAccountManagerWithNotifications.GrooveApiScope, 
-                    false);
                 StreamResponse streamResponse = await _grooveClient.StreamAsync(
                     "music.AA3EB907-0100-11DB-89CA-0019B92A3933", 
-                    Guid.NewGuid().ToString(), 
-                    userToken);
+                    Guid.NewGuid().ToString());
 
-                await HandleGrooveApiErrorAsync(streamResponse.Error);
+                HandleGrooveApiError(streamResponse.Error);
             }
             else
             {
@@ -102,7 +97,7 @@ namespace Microsoft.Groove.Api.Samples
             ((Button)sender).IsEnabled = true;
         }
 
-        private async Task HandleGrooveApiErrorAsync(Error error)
+        private void HandleGrooveApiError(Error error)
         {
             if (error == null)
             {
@@ -111,11 +106,6 @@ namespace Microsoft.Groove.Api.Samples
             else
             {
                 Debug.WriteLine($"Groove API error: {error.ErrorCode}");
-                if (error.ErrorCode == ErrorCode.INVALID_AUTHORIZATION_HEADER.ToString("G"))
-                {
-                    Debug.WriteLine("Purging token cache");
-                    await _userAccountManager.PurgeTokenCache();
-                }
             }
         }
     }

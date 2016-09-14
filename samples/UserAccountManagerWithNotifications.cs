@@ -17,10 +17,11 @@ namespace Microsoft.Groove.Api.Samples
     using Windows.Security.Credentials;
     using Windows.Storage;
     using Windows.UI.ApplicationSettings;
+    using Client;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
-    public class UserAccountManagerWithNotifications : INotifyPropertyChanged
+    public class UserAccountManagerWithNotifications : INotifyPropertyChanged, IUserTokenManager
     {
         // To obtain Microsoft account tokens, you must register your application online 
         // (see https://github.com/Microsoft/Groove-API-documentation/blob/master/Main/Using%20the%20Groove%20RESTful%20Services/User%20Authentication.md).
@@ -57,6 +58,7 @@ namespace Microsoft.Groove.Api.Samples
             }
         }
 
+        // TODO: rename to UserIsSignedIn
         private bool _userIsLoggedIn;
 
         public bool UserIsLoggedIn
@@ -285,6 +287,17 @@ namespace Microsoft.Groove.Api.Samples
                 timer.Stop();
                 Debug.WriteLine($"Getting user token took {timer.ElapsedMilliseconds}ms");
             }
+        }
+
+        public async Task<string> GetUserAuthorizationHeaderAsync(bool forceRefresh)
+        {
+            if (forceRefresh)
+            {
+                await PurgeTokenCache();
+            }
+
+            string userToken = await GetUserTokenAsync(GrooveApiScope, !forceRefresh);
+            return $"Bearer {userToken}";
         }
 
         private void HandleTokenError(WebTokenRequestResult result)

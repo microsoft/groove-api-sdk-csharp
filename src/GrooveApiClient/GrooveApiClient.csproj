@@ -49,6 +49,7 @@
     <Compile Include="GrooveClient.cs" />
     <Compile Include="GrooveClientFactory.cs" />
     <Compile Include="IGrooveClient.cs" />
+    <Compile Include="IUserTokenManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleServiceClient.cs" />
   </ItemGroup>
