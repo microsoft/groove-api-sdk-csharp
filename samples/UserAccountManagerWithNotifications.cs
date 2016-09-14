@@ -58,15 +58,14 @@ namespace Microsoft.Groove.Api.Samples
             }
         }
 
-        // TODO: rename to UserIsSignedIn
-        private bool _userIsLoggedIn;
+        private bool _userIsSignedIn;
 
-        public bool UserIsLoggedIn
+        public bool UserIsSignedIn
         {
-            get { return _userIsLoggedIn; }
+            get { return _userIsSignedIn; }
             set
             {
-                _userIsLoggedIn = value;
+                _userIsSignedIn = value;
                 OnPropertyChanged();
             }
         }
@@ -124,7 +123,7 @@ namespace Microsoft.Groove.Api.Samples
                     ApplicationData.Current.LocalSettings.Values[CurrentUserProviderKey] = account.WebAccountProvider.Id;
                     ApplicationData.Current.LocalSettings.Values[CurrentUserKey] = account.Id;
 
-                    UserIsLoggedIn = true;
+                    UserIsSignedIn = true;
 
                     timer.Stop();
 
@@ -154,7 +153,7 @@ namespace Microsoft.Groove.Api.Samples
         /// <returns>True if sign-in is successful.</returns>
         public async Task<bool> SignInUserAccountSilentlyAsync()
         {
-            UserIsLoggedIn = false;
+            UserIsSignedIn = false;
             UserName = string.Empty;
 
             WebAccount savedAccount = await GetCurrentAccountAsync();
@@ -169,7 +168,7 @@ namespace Microsoft.Groove.Api.Samples
 
             if (userName != null)
             {
-                UserIsLoggedIn = true;
+                UserIsSignedIn = true;
                 UserName = userName;
                 return true;
             }
@@ -199,7 +198,7 @@ namespace Microsoft.Groove.Api.Samples
                 ApplicationData.Current.LocalSettings.Values.Remove(CurrentUserKey);
                 ApplicationData.Current.LocalSettings.Values.Remove(CurrentUserProviderKey);
 
-                UserIsLoggedIn = false;
+                UserIsSignedIn = false;
                 UserName = string.Empty;
 
                 Debug.WriteLine("Successfully logged out");

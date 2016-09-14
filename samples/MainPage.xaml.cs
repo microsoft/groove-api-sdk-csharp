@@ -37,7 +37,7 @@ namespace Microsoft.Groove.Api.Samples
         {
             AccountsSettingsPane.GetForCurrentView().AccountCommandsRequested += _userAccountManager.BuildAccountPaneAsync;
             await _userAccountManager.SignInUserAccountSilentlyAsync();
-            if (_userAccountManager.UserIsLoggedIn)
+            if (_userAccountManager.UserIsSignedIn)
             {
                 Debug.WriteLine("Successful silent sign-in");
             }
@@ -52,7 +52,7 @@ namespace Microsoft.Groove.Api.Samples
         {
             ((Button)sender).IsEnabled = false;
 
-            if (_userAccountManager.UserIsLoggedIn)
+            if (_userAccountManager.UserIsSignedIn)
             {
                 await _userAccountManager.SignOutAccountAsync();
             }
@@ -81,7 +81,7 @@ namespace Microsoft.Groove.Api.Samples
         {
             ((Button)sender).IsEnabled = false;
 
-            if (_userAccountManager.UserIsLoggedIn)
+            if (_userAccountManager.UserIsSignedIn)
             {
                 StreamResponse streamResponse = await _grooveClient.StreamAsync(
                     "music.AA3EB907-0100-11DB-89CA-0019B92A3933", 
