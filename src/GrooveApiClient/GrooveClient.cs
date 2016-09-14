@@ -387,6 +387,11 @@ namespace Microsoft.Groove.Api.Client
             where TResponse : BaseResponse
         {
             string userAuthorizationHeader = await _userTokenManager.GetUserAuthorizationHeaderAsync();
+            if (string.IsNullOrEmpty(userAuthorizationHeader))
+            {
+                throw new ArgumentNullException("UserAuthorizationHeader", "Couldn't obtain a user authorization header");
+            }
+
             Dictionary<string, string> requestHeaders = FormatRequestHeaders(userAuthorizationHeader);
 
             TResponse response = await apiCall(requestHeaders);
@@ -394,8 +399,12 @@ namespace Microsoft.Groove.Api.Client
             if (response.Error?.ErrorCode == ErrorCode.INVALID_AUTHORIZATION_HEADER.ToString("G"))
             {
                 userAuthorizationHeader = await _userTokenManager.GetUserAuthorizationHeaderAsync(true);
-                requestHeaders = FormatRequestHeaders(userAuthorizationHeader);
+                if (string.IsNullOrEmpty(userAuthorizationHeader))
+                {
+                    throw new ArgumentNullException("UserAuthorizationHeader", "Couldn't obtain a user authorization header");
+                }
 
+                requestHeaders = FormatRequestHeaders(userAuthorizationHeader);
                 response = await apiCall(requestHeaders);
             }
 
