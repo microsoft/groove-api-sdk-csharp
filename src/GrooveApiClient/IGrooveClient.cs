@@ -30,7 +30,6 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="language">ISO 2 letter code.</param>
         /// <param name="country">ISO 2 letter code.</param>
         /// <param name="maxItems">Max items per category in the response, between 1 and 25. Default value is 25.</param>
-        /// <param name="withUserToken">True if the call should be user-authenticated (to search collection content for example).</param>
         /// <returns>Content response with lists of media items </returns>
         Task<ContentResponse> SearchAsync(
             MediaNamespace mediaNamespace, 
@@ -39,20 +38,17 @@ namespace Microsoft.Groove.Api.Client
             SearchFilter filter = SearchFilter.Default,
             string language = null, 
             string country = null, 
-            int? maxItems = null,
-            bool withUserToken = false);
+            int? maxItems = null);
 
         /// <summary>
         /// Request the continuation of an incomplete list of content from the service.
         /// </summary>
         /// <param name="mediaNamespace">Must be the same as in the original request.</param>
         /// <param name="continuationToken">A Continuation Token provided in an earlier service response.</param>
-        /// <param name="withUserToken">True if the call should be user-authenticated (to search collection content for example).</param>
         /// <returns>Content response with lists of media items.</returns>
         Task<ContentResponse> SearchContinuationAsync(
             MediaNamespace mediaNamespace, 
-            string continuationToken,
-            bool withUserToken = false);
+            string continuationToken);
 
         /// <summary>
         /// Lookup a list of items and get details about them.
@@ -62,15 +58,13 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="language">ISO 2 letter code.</param>
         /// <param name="country">ISO 2 letter code.</param>
         /// <param name="extras">Enumeration of extra details.</param>
-        /// <param name="withUserToken">True if the call should be user-authenticated (to lookup collection content for example).</param>
         /// <returns>Content response with details about one or more items.</returns>
         Task<ContentResponse> LookupAsync(
             List<string> itemIds, 
             ContentSource? source = null, 
             string language = null,
             string country = null, 
-            ExtraDetails extras = ExtraDetails.None,
-            bool withUserToken = false);
+            ExtraDetails extras = ExtraDetails.None);
 
         /// <summary>
         /// Lookup an item and get details about it.
@@ -80,15 +74,13 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="language">ISO 2 letter code.</param>
         /// <param name="country">ISO 2 letter code.</param>
         /// <param name="extras">Enumeration of extra details.</param>
-        /// <param name="withUserToken">True if the call should be user-authenticated (to lookup collection content for example).</param>
         /// <returns>Content response with details about one or more items.</returns>
         Task<ContentResponse> LookupAsync(
             string itemId,
             ContentSource? source = null,
             string language = null,
             string country = null,
-            ExtraDetails extras = ExtraDetails.None,
-            bool withUserToken = false);
+            ExtraDetails extras = ExtraDetails.None);
 
         /// <summary>
         /// Request the continuation of an incomplete list of content from the service. 
@@ -96,12 +88,10 @@ namespace Microsoft.Groove.Api.Client
         /// </summary>
         /// <param name="itemIds">Ids to look up, each of which is prefixed by a namespace: {namespace.id}.</param>
         /// <param name="continuationToken">A Continuation Token provided in an earlier service response.</param>
-        /// <param name="withUserToken">True if the call should be user-authenticated (to lookup collection content for example).</param>
         /// <returns>Content response with details about one or more items.</returns>
         Task<ContentResponse> LookupContinuationAsync(
             List<string> itemIds, 
-            string continuationToken,
-            bool withUserToken = false);
+            string continuationToken);
 
         /// <summary>
         /// Request the continuation of an incomplete list of content from the service. 
@@ -109,12 +99,10 @@ namespace Microsoft.Groove.Api.Client
         /// </summary>
         /// <param name="itemId">Id to look up, prefixed by a namespace: {namespace.id}.</param>
         /// <param name="continuationToken">A Continuation Token provided in an earlier service response.</param>
-        /// <param name="withUserToken">True if the call should be user-authenticated (to lookup collection content for example).</param>
         /// <returns>Content response with details about one or more items.</returns>
         Task<ContentResponse> LookupContinuationAsync(
             string itemId,
-            string continuationToken,
-            bool withUserToken = false);
+            string continuationToken);
 
         /// <summary>
         /// Browse the catalog or your collection
@@ -127,7 +115,6 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="page">Go directly to a given page. Page size is maxItems.</param>
         /// <param name="country">ISO 2 letter code.</param>
         /// <param name="language">ISO 2 letter code.</param>
-        /// <param name="withUserToken">True if the call should be user-authenticated (to browse collection content for example).</param>
         /// <returns>Content response with the items corresponding to the browse request.</returns>
         Task<ContentResponse> BrowseAsync(
             MediaNamespace mediaNamespace, 
@@ -137,8 +124,7 @@ namespace Microsoft.Groove.Api.Client
             int? maxItems = null, 
             int? page = null, 
             string country = null,
-            string language = null,
-            bool withUserToken = false);
+            string language = null);
 
         /// <summary>
         /// Request the continuation of an incomplete browse response. The relative URL (i.e. mediaNamespace, source and type) must be the same as in the original request.
@@ -147,14 +133,12 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="source">A ContentSource value. Only Collection for now.</param>
         /// <param name="type">The item type you want to browse</param>
         /// <param name="continuationToken">A Continuation Token provided in an earlier service response.</param>
-        /// <param name="withUserToken">True if the call should be user-authenticated (to browse collection content for example).</param>
         /// <returns>Content response with the items corresponding to the browse request.</returns>
         Task<ContentResponse> BrowseContinuationAsync(
             MediaNamespace mediaNamespace, 
             ContentSource source, 
             ItemType type,
-            string continuationToken,
-            bool withUserToken = false);
+            string continuationToken);
 
         /// <summary>
         /// Get spotlight items of the moment

@@ -15,6 +15,8 @@ namespace Microsoft.Groove.Api.Client
     /// </summary>
     public interface IUserTokenManager
     {
+        bool UserIsSignedIn { get; }
+
         /// <summary>
         /// Get a valid user token that can be used to call the Groove API and format it to be used in the request's Authorization header.
         /// </summary>

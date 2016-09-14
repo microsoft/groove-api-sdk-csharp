@@ -296,7 +296,7 @@ namespace Microsoft.Groove.Api.Samples
             }
 
             string userToken = await GetUserTokenAsync(GrooveApiScope, !forceRefresh);
-            return $"Bearer {userToken}";
+            return userToken != null ? $"Bearer {userToken}" : null;
         }
 
         private void HandleTokenError(WebTokenRequestResult result)
