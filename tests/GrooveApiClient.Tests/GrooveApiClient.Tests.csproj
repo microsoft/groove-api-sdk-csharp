@@ -38,6 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -52,11 +53,17 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CatalogShould.cs" />
+    <Compile Include="CollectionShould.cs" />
+    <Compile Include="DeeplinksShould.cs" />
     <Compile Include="DeveloperAuthenticationShould.cs" />
-    <Compile Include="LookupShould.cs" />
+    <Compile Include="GettingStarted.cs" />
+    <Compile Include="ImagesShould.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchShould.cs" />
-    <Compile Include="TestSecrets.cs" />
+    <Compile Include="StreamShould.cs" />
+    <Compile Include="TestBase.cs" />
+    <Compile Include="TestBaseExtensions.cs" />
+    <Compile Include="TestUserTokenManagerFromConfigurationValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\GrooveApiClient\GrooveApiClient.csproj">
@@ -67,6 +74,9 @@
       <Project>{5850fdbc-1778-4107-a7df-c3e331e4ba6e}</Project>
       <Name>GrooveApiDataContract</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

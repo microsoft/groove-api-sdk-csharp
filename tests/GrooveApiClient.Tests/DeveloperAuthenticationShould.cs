@@ -13,12 +13,12 @@ namespace Microsoft.Groove.Api.Client.Tests
     using VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class DeveloperAuthenticationShould
+    public class DeveloperAuthenticationShould : TestBase
     {
         [TestMethod]
         public async Task CorrectlyAuthenticateWithAzureDataMarket()
         {
-            AzureDataMarketAuthenticationCache client = new AzureDataMarketAuthenticationCache(TestSecrets.ClientId, TestSecrets.ClientSecret);
+            AzureDataMarketAuthenticationCache client = new AzureDataMarketAuthenticationCache(AzureDataMarketClientId, AzureDataMarketClientSecret);
             AzureDataMarketAuthenticationCache.AccessToken accessToken = await client.CheckAndRenewTokenAsync(CancellationToken.None);
 
             Assert.IsFalse(string.IsNullOrEmpty(accessToken.Token));
