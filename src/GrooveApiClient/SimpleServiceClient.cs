@@ -37,7 +37,7 @@ namespace Microsoft.Groove.Api.Client
             () => CreateClient(DefaultTimeout),
             LazyThreadSafetyMode.PublicationOnly);
 
-        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(60);
+        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
 
         public TimeSpan Timeout
         {
