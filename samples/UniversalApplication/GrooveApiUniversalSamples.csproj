@@ -129,11 +129,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\GrooveApiDataContract\GrooveApiDataContract.csproj">
+    <ProjectReference Include="..\..\src\GrooveApiDataContract\GrooveApiDataContract.csproj">
       <Project>{5850fdbc-1778-4107-a7df-c3e331e4ba6e}</Project>
       <Name>GrooveApiDataContract</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\GrooveApiClient\GrooveApiClient.csproj">
+    <ProjectReference Include="..\..\src\GrooveApiClient\GrooveApiClient.csproj">
       <Project>{efc538c3-4ef6-43b4-b49a-152e35563bda}</Project>
       <Name>GrooveApiClient</Name>
     </ProjectReference>

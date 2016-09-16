@@ -17,9 +17,9 @@ namespace Microsoft.Groove.Api.Samples
     using Windows.Security.Credentials;
     using Windows.Storage;
     using Windows.UI.ApplicationSettings;
-    using Client;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
+    using Client;
 
     public class UserAccountManagerWithNotifications : INotifyPropertyChanged, IUserTokenManager
     {
