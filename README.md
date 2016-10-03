@@ -1,7 +1,7 @@
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 # Groove API SDK for CSharp
-Integrate the [Groove API](https://github.com/Microsoft/Groove-API-documentation) into your C# project!
+Integrate the [Groove API](https://docs.microsoft.com/en-us/groovedocs/groove%20service) into your C# project!
 
 The Groove API SDK is built as a Portable Class Library and targets the following frameworks:
 * .NET 4.5
