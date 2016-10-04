@@ -23,8 +23,8 @@ namespace Microsoft.Groove.Api.Samples
     {
         // Provide your own values here
         // See https://github.com/Microsoft/Groove-API-documentation/blob/master/Main/Using%20the%20Groove%20RESTful%20Services/Obtaining%20a%20Developer%20Access%20Token.md
-        private const string AzureDataMarketClientId = "xmva-e2e-ieb-test-1";
-        private const string AzureDataMarketClientSecret = "TaQvTe0a9t/jZfyLQbGXcEWsZ2tlK/ZXzu0CJUhenkc=";
+        private const string AzureDataMarketClientId = "";
+        private const string AzureDataMarketClientSecret = "";
 
         private readonly UserAccountManagerWithNotifications _userAccountManager;
         private readonly IGrooveClient _grooveClient;
