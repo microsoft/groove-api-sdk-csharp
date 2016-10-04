@@ -14,16 +14,23 @@ namespace Microsoft.Groove.Api.Samples
     using Windows.UI.Xaml.Navigation;
     using Client;
     using DataContract;
+    using ViewModels;
+
+    // TODO: Add a deeplink button to the Groove app and update documentation
+    // TODO: Add in-app streaming
 
     public sealed partial class MainPage : Page
     {
         // Provide your own values here
         // See https://github.com/Microsoft/Groove-API-documentation/blob/master/Main/Using%20the%20Groove%20RESTful%20Services/Obtaining%20a%20Developer%20Access%20Token.md
-        private const string AzureDataMarketClientId = "";
-        private const string AzureDataMarketClientSecret = "";
+        private const string AzureDataMarketClientId = "xmva-e2e-ieb-test-1";
+        private const string AzureDataMarketClientSecret = "TaQvTe0a9t/jZfyLQbGXcEWsZ2tlK/ZXzu0CJUhenkc=";
 
         private readonly UserAccountManagerWithNotifications _userAccountManager;
         private readonly IGrooveClient _grooveClient;
+
+        public string SearchQuery { get; set; }
+        public MusicContentPaneViewModel MusicContentPaneViewModel { get; set; }
 
         public MainPage()
         {
@@ -31,6 +38,8 @@ namespace Microsoft.Groove.Api.Samples
 
             _userAccountManager = new UserAccountManagerWithNotifications();
             _grooveClient = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret, _userAccountManager);
+
+            MusicContentPaneViewModel = new MusicContentPaneViewModel();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -64,35 +73,40 @@ namespace Microsoft.Groove.Api.Samples
             ((Button)sender).IsEnabled = true;
         }
 
-        private async void LookupButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            ((Button)sender).IsEnabled = false;
-
-            ContentResponse lookupResponse = await _grooveClient.LookupAsync(
-                "music.B13EB907-0100-11DB-89CA-0019B92A3933", 
-                ContentSource.Catalog);
-
-            HandleGrooveApiError(lookupResponse.Error);
-
-            ((Button)sender).IsEnabled = true;
-        }
-
-        private async void StreamButton_OnClick(object sender, RoutedEventArgs e)
+        private async void PlaylistsButton_OnClick(object sender, RoutedEventArgs e)
         {
             ((Button)sender).IsEnabled = false;
 
             if (_userAccountManager.UserIsSignedIn)
             {
-                StreamResponse streamResponse = await _grooveClient.StreamAsync(
-                    "music.AA3EB907-0100-11DB-89CA-0019B92A3933", 
-                    Guid.NewGuid().ToString());
+                ContentResponse playlists = await _grooveClient.BrowseAsync(
+                    MediaNamespace.music,
+                    ContentSource.Collection,
+                    ItemType.Playlists);
 
-                HandleGrooveApiError(streamResponse.Error);
+                HandleGrooveApiError(playlists.Error);
+                MusicContentPaneViewModel.DisplayMusicContent(playlists);
             }
             else
             {
                 AccountsSettingsPane.Show();
             }
+
+            ((Button)sender).IsEnabled = true;
+        }
+
+        private async void SearchButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            ((Button)sender).IsEnabled = false;
+
+            ContentResponse searchResponse = await _grooveClient.SearchAsync(
+                MediaNamespace.music,
+                SearchQuery,
+                ContentSource.Catalog,
+                maxItems: 10);
+
+            HandleGrooveApiError(searchResponse.Error);
+            MusicContentPaneViewModel.DisplayMusicContent(searchResponse);
 
             ((Button)sender).IsEnabled = true;
         }
@@ -105,6 +119,7 @@ namespace Microsoft.Groove.Api.Samples
             }
             else
             {
+                // TODO: Add a pop-up window detailing the error
                 Debug.WriteLine($"Groove API error: {error.ErrorCode}");
             }
         }
