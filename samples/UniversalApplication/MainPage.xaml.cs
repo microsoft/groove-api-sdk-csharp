@@ -8,7 +8,9 @@ namespace Microsoft.Groove.Api.Samples
 {
     using System;
     using System.Diagnostics;
+    using System.Threading.Tasks;
     using Windows.UI.ApplicationSettings;
+    using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Navigation;
@@ -84,7 +86,7 @@ namespace Microsoft.Groove.Api.Samples
                     ContentSource.Collection,
                     ItemType.Playlists);
 
-                HandleGrooveApiError(playlists.Error);
+                await HandleGrooveApiErrorAsync(playlists.Error);
                 MusicContentPaneViewModel.DisplayMusicContent(playlists);
             }
             else
@@ -105,13 +107,13 @@ namespace Microsoft.Groove.Api.Samples
                 ContentSource.Catalog,
                 maxItems: 10);
 
-            HandleGrooveApiError(searchResponse.Error);
+            await HandleGrooveApiErrorAsync(searchResponse.Error);
             MusicContentPaneViewModel.DisplayMusicContent(searchResponse);
 
             ((Button)sender).IsEnabled = true;
         }
 
-        private void HandleGrooveApiError(Error error)
+        private async Task HandleGrooveApiErrorAsync(Error error)
         {
             if (error == null)
             {
@@ -119,8 +121,14 @@ namespace Microsoft.Groove.Api.Samples
             }
             else
             {
-                // TODO: Add a pop-up window detailing the error
+                MessageDialog errorPopup = new MessageDialog(
+                    $"{error.ErrorCode} : {error.Message}. {error.Description}", 
+                    "Groove API error");
+                await errorPopup.ShowAsync();
+
                 Debug.WriteLine($"Groove API error: {error.ErrorCode}");
+                Debug.WriteLine($"Groove API error message: {error.Message}");
+                Debug.WriteLine($"Groove API error description: {error.Description}");
             }
         }
     }
