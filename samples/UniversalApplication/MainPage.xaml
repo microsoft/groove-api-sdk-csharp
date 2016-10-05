@@ -65,8 +65,16 @@
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="dataContract:Track">
                             <StackPanel Margin="5">
-                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}}" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Height="150" Width="150" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=150}" />
+                                    <StackPanel Width="50" Height="150">
+                                        <SymbolIcon Symbol="Play" Height="40" Width="40" Tapped="PlayButton_OnTapped" Margin="5" />
+                                        <SymbolIcon Symbol="Link" Height="40" Width="40" Tapped="DeeplinkButton_OnTapped" Margin="5,0,5,0" />
+                                        <SymbolIcon Symbol="More" Height="40" Width="40" Margin="5" />
+                                    </StackPanel>
+                                </StackPanel>
                                 <TextBlock Text="{x:Bind Path=Name}" MaxWidth="200" />
+                                <TextBlock Text="{x:Bind Path=Album.Name}" FontWeight="Light" FontStyle="Oblique" MaxWidth="200" />
                             </StackPanel>
                         </DataTemplate>
                     </GridView.ItemTemplate>
@@ -79,8 +87,9 @@
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="dataContract:Album">
                             <StackPanel Margin="5">
-                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}}" />
+                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
                                 <TextBlock Text="{x:Bind Path=Name}" MaxWidth="200" />
+                                <TextBlock Text="{x:Bind Path=Subtitle}" FontWeight="Light" FontStyle="Oblique" MaxWidth="200" />
                             </StackPanel>
                         </DataTemplate>
                     </GridView.ItemTemplate>
@@ -93,7 +102,7 @@
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="dataContract:Artist">
                             <StackPanel Margin="5">
-                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}}" />
+                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
                                 <TextBlock Text="{x:Bind Path=Name}" MaxWidth="200" />
                             </StackPanel>
                         </DataTemplate>
@@ -107,7 +116,7 @@
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="dataContract:Playlist">
                             <StackPanel Margin="5">
-                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}}" />
+                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
                                 <TextBlock Text="{x:Bind Path=Name}" MaxWidth="200" />
                             </StackPanel>
                         </DataTemplate>

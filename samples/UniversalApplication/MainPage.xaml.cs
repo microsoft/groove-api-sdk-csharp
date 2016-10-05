@@ -9,16 +9,17 @@ namespace Microsoft.Groove.Api.Samples
     using System;
     using System.Diagnostics;
     using System.Threading.Tasks;
+    using Windows.System;
     using Windows.UI.ApplicationSettings;
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Navigation;
     using Client;
     using DataContract;
     using ViewModels;
 
-    // TODO: Add a deeplink button to the Groove app and update documentation
     // TODO: Add in-app streaming
 
     public sealed partial class MainPage : Page
@@ -113,6 +114,22 @@ namespace Microsoft.Groove.Api.Samples
             ((Button)sender).IsEnabled = true;
         }
 
+        private void PlayButton_OnTapped(object sender, TappedRoutedEventArgs e)
+        {
+            Debug.WriteLine("Play!");
+        }
+
+        private async void DeeplinkButton_OnTapped(object sender, TappedRoutedEventArgs e)
+        {
+            SymbolIcon expectedSender = sender as SymbolIcon;
+            Track selectedTrack = expectedSender?.DataContext as Track;
+            if (selectedTrack != null)
+            {
+                string deeplink = selectedTrack.Link;
+                await Launcher.LaunchUriAsync(new Uri(deeplink));
+            }
+        }
+
         private async Task HandleGrooveApiErrorAsync(Error error)
         {
             if (error == null)
@@ -121,14 +138,14 @@ namespace Microsoft.Groove.Api.Samples
             }
             else
             {
+                Debug.WriteLine($"Groove API error: {error.ErrorCode}");
+                Debug.WriteLine($"Groove API error message: {error.Message}");
+                Debug.WriteLine($"Groove API error description: {error.Description}");
+
                 MessageDialog errorPopup = new MessageDialog(
                     $"{error.ErrorCode} : {error.Message}. {error.Description}", 
                     "Groove API error");
                 await errorPopup.ShowAsync();
-
-                Debug.WriteLine($"Groove API error: {error.ErrorCode}");
-                Debug.WriteLine($"Groove API error message: {error.Message}");
-                Debug.WriteLine($"Groove API error description: {error.Description}");
             }
         }
     }

@@ -16,9 +16,10 @@ namespace Microsoft.Groove.Api.Samples.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             string imageUrl = value as string;
+            int size = int.Parse((string) parameter);
             if (imageUrl != null)
             {
-                return new BitmapImage(new Uri(imageUrl + "&w=200&h=200"));
+                return new BitmapImage(new Uri($"{imageUrl}&w={size}&h={size}"));
             }
 
             return null;
