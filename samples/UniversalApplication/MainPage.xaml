@@ -12,6 +12,7 @@
     <Page.Resources>
         <converters:SignInButtonTextConverter x:Key="SignInButtonTextConverter"/>
         <converters:ImageUrlSizeConverter x:Key="ImageUrlSizeConverter"/>
+        <converters:StreamUrlConverter x:Key="StreamUrlConverter"/>
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -53,10 +54,11 @@
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
@@ -122,6 +124,12 @@
                         </DataTemplate>
                     </GridView.ItemTemplate>
                 </GridView>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="4">
+                <MediaPlayerElement AreTransportControlsEnabled="True" 
+                                    AutoPlay="True" 
+                                    Source="{x:Bind Path=PlayerViewModel.StreamUrl, Mode=OneWay, Converter={StaticResource StreamUrlConverter}}" />
             </StackPanel>
         </Grid>
     </Grid>

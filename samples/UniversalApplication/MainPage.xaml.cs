@@ -20,8 +20,6 @@ namespace Microsoft.Groove.Api.Samples
     using DataContract;
     using ViewModels;
 
-    // TODO: Add in-app streaming
-
     public sealed partial class MainPage : Page
     {
         // Provide your own values here
@@ -29,10 +27,20 @@ namespace Microsoft.Groove.Api.Samples
         private const string AzureDataMarketClientId = "";
         private const string AzureDataMarketClientSecret = "";
 
+        /// <summary>
+        /// The ClientInstanceId is used for streaming. You'll need to send it with every stream request.
+        /// The purpose of this ID is to identify a specific instance of your application. 
+        /// That means it should be generated once when the application is installed and persisted afterwards.
+        /// It needs to has at least 32 characters and at most 128.
+        /// It's used service-side to prevent users from streaming concurrently on multiple devices.
+        /// </summary>
+        private const string ClientInstanceId = "GrooveApiUniversalSamples42000000";
+
         private readonly UserAccountManagerWithNotifications _userAccountManager;
         private readonly IGrooveClient _grooveClient;
 
         public string SearchQuery { get; set; }
+        public PlayerViewModel PlayerViewModel { get; set; }
         public MusicContentPaneViewModel MusicContentPaneViewModel { get; set; }
 
         public MainPage()
@@ -43,6 +51,7 @@ namespace Microsoft.Groove.Api.Samples
             _grooveClient = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret, _userAccountManager);
 
             MusicContentPaneViewModel = new MusicContentPaneViewModel();
+            PlayerViewModel = new PlayerViewModel();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -114,9 +123,39 @@ namespace Microsoft.Groove.Api.Samples
             ((Button)sender).IsEnabled = true;
         }
 
-        private void PlayButton_OnTapped(object sender, TappedRoutedEventArgs e)
+        private async void PlayButton_OnTapped(object sender, TappedRoutedEventArgs e)
         {
-            Debug.WriteLine("Play!");
+            SymbolIcon expectedSender = sender as SymbolIcon;
+            Track selectedTrack = expectedSender?.DataContext as Track;
+            if (selectedTrack != null)
+            {
+                if (_userAccountManager.UserIsSignedIn)
+                {
+                    StreamResponse streamResponse = await _grooveClient.StreamAsync(
+                        selectedTrack.Id,
+                        ClientInstanceId);
+
+                    await HandleGrooveApiErrorAsync(streamResponse.Error);
+
+                    if (!string.IsNullOrEmpty(streamResponse.Url))
+                    {
+                        PlayerViewModel.StreamUrl = streamResponse.Url;
+                    }
+                }
+                else
+                {
+                    StreamResponse previewResponse = await _grooveClient.PreviewAsync(
+                        selectedTrack.Id,
+                        ClientInstanceId);
+
+                    await HandleGrooveApiErrorAsync(previewResponse.Error);
+
+                    if (!string.IsNullOrEmpty(previewResponse.Url))
+                    {
+                        PlayerViewModel.StreamUrl = previewResponse.Url;
+                    }
+                }
+            }
         }
 
         private async void DeeplinkButton_OnTapped(object sender, TappedRoutedEventArgs e)
