@@ -13,6 +13,7 @@
         <converters:SignInButtonTextConverter x:Key="SignInButtonTextConverter"/>
         <converters:ImageUrlSizeConverter x:Key="ImageUrlSizeConverter"/>
         <converters:StreamUrlConverter x:Key="StreamUrlConverter"/>
+        <converters:StringFormatConverter x:Key="StringFormatConverter"/>
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -47,8 +48,12 @@
             
             <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
                 <Rectangle Fill="DarkGray" Height="2px" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <TextBlock Text="{x:Bind Path=_userAccountManager.UserName, Mode=OneWay}" TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <Button Content="{x:Bind Path=_userAccountManager.UserIsSignedIn, Mode=OneWay, Converter={StaticResource SignInButtonTextConverter}}" Click="SignInButton_Click" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
+                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserName, Mode=OneWay}" TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
+                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserHasGrooveSubscription, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Groove Premium: {0}'}" 
+                           TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
+                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserGrooveSubscriptionCountry, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Groove Country: {0}'}" 
+                           TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
+                <Button Content="{x:Bind Path=UserProfileViewModel.UserIsSignedIn, Mode=OneWay, Converter={StaticResource SignInButtonTextConverter}}" Click="SignInButton_Click" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
             </StackPanel>
         </Grid>
 

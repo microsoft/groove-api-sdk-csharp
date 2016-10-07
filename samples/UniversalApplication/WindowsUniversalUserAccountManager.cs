@@ -8,20 +8,15 @@
 namespace Microsoft.Groove.Api.Samples
 {
     using System;
-    using System.ComponentModel;
     using System.Diagnostics;
-    using System.Net.Http;
-    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using Windows.Security.Authentication.Web.Core;
     using Windows.Security.Credentials;
     using Windows.Storage;
     using Windows.UI.ApplicationSettings;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using Client;
 
-    public class UserAccountManagerWithNotifications : INotifyPropertyChanged, IUserTokenManager
+    public class WindowsUniversalUserAccountManager : IUserTokenManager
     {
         // To obtain Microsoft account tokens, you must register your application online 
         // (see https://github.com/Microsoft/Groove-API-documentation/blob/master/Main/Using%20the%20Groove%20RESTful%20Services/User%20Authentication.md).
@@ -47,36 +42,19 @@ namespace Microsoft.Groove.Api.Samples
         private const string CurrentUserKey = "CurrentUserId";
         private const string CurrentUserProviderKey = "CurrentUserProviderId";
 
-        private string _userName;
-        public string UserName
-        {
-            get { return _userName; }
-            set
-            {
-                _userName = value;
-                OnPropertyChanged();
-            }
-        }
+        public bool UserIsSignedIn { get; private set; }
 
-        private bool _userIsSignedIn;
+        /// <summary>
+        /// This event is raised everytime a user account is signed in or out.
+        /// The value of the argument lets you know whether the user signed-in or not.
+        /// </summary>
+        public event UserSignInChangeHandler UserSignInChange;
 
-        public bool UserIsSignedIn
-        {
-            get { return _userIsSignedIn; }
-            set
-            {
-                _userIsSignedIn = value;
-                OnPropertyChanged();
-            }
-        }
+        /// <summary>
+        /// Delete associated to the <see cref="WindowsUniversalUserAccountManager.UserSignInChange"/> event.
+        /// </summary>
+        public delegate void UserSignInChangeHandler(WindowsUniversalUserAccountManager accountManager, bool e);
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            // Raise the PropertyChanged event, passing the name of the property whose value has changed.
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         /// <summary>
         /// This method customizes the accounts settings pane to setup user authentication with Microsoft accounts.
@@ -88,7 +66,7 @@ namespace Microsoft.Groove.Api.Samples
             AccountsSettingsPaneCommandsRequestedEventArgs e)
         {
             var deferral = e.GetDeferral();
-            
+
             var msaProvider = await WebAuthenticationCoreManager.FindAccountProviderAsync(
                 MicrosoftAccountProviderId,
                 ConsumerAuthority);
@@ -124,11 +102,9 @@ namespace Microsoft.Groove.Api.Samples
                     ApplicationData.Current.LocalSettings.Values[CurrentUserKey] = account.Id;
 
                     UserIsSignedIn = true;
+                    UserSignInChange(this, true);
 
                     timer.Stop();
-
-                    string userName = await GetUserNameAsync(result.ResponseData[0].Token);
-                    UserName = userName;
                     return;
                 }
 
@@ -154,22 +130,19 @@ namespace Microsoft.Groove.Api.Samples
         public async Task<bool> SignInUserAccountSilentlyAsync()
         {
             UserIsSignedIn = false;
-            UserName = string.Empty;
+            UserSignInChange(this, false);
 
             WebAccount savedAccount = await GetCurrentAccountAsync();
-
             if (savedAccount?.WebAccountProvider == null)
             {
                 return false;
             }
 
-            string userToken = await GetUserTokenAsync(savedAccount, ProfileScope, true);
-            string userName = await GetUserNameAsync(userToken);
-
-            if (userName != null)
+            string userToken = await GetUserTokenAsync(savedAccount, $"{ProfileScope} {GrooveApiScope}", true);
+            if (userToken != null)
             {
                 UserIsSignedIn = true;
-                UserName = userName;
+                UserSignInChange(this, true);
                 return true;
             }
 
@@ -199,7 +172,7 @@ namespace Microsoft.Groove.Api.Samples
                 ApplicationData.Current.LocalSettings.Values.Remove(CurrentUserProviderKey);
 
                 UserIsSignedIn = false;
-                UserName = string.Empty;
+                UserSignInChange(this, false);
 
                 Debug.WriteLine("Successfully logged out");
             }
@@ -323,48 +296,13 @@ namespace Microsoft.Groove.Api.Samples
             WebAccount currentAccount = await GetCurrentAccountAsync();
             if (currentAccount != null)
             {
-                foreach (string scope in new[] {ProfileScope, GrooveApiScope, $"{ProfileScope} {GrooveApiScope}"})
+                foreach (string scope in new[] { ProfileScope, GrooveApiScope, $"{ProfileScope} {GrooveApiScope}" })
                 {
                     WebTokenRequest request = new WebTokenRequest(currentAccount.WebAccountProvider, scope);
                     WebTokenRequestResult result = await WebAuthenticationCoreManager.GetTokenSilentlyAsync(request, currentAccount);
 
                     await result.InvalidateCacheAsync();
                 }
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the currently logged-in user.
-        /// </summary>
-        /// <returns>Null if no user is logged in or user profile couldn't be fetched.</returns>
-        public async Task<string> GetUserNameAsync()
-        {
-            string userToken = await GetUserTokenAsync(ProfileScope, false);
-            return await GetUserNameAsync(userToken);
-        }
-
-        /// <summary>
-        /// Gets the name of the currently logged-in user.
-        /// </summary>
-        /// <param name="userToken">User token with the correct scopes.</param>
-        /// <returns>Null if user profile couldn't be fetched.</returns>
-        public async Task<string> GetUserNameAsync(string userToken)
-        {
-            if (userToken == null)
-            {
-                return null;
-            }
-
-            Uri restApi = new Uri(@"https://apis.live.net/v5.0/me?access_token=" + userToken);
-
-            using (HttpClient client = new HttpClient())
-            using (HttpResponseMessage response = await client.GetAsync(restApi))
-            {
-                string content = await response.Content.ReadAsStringAsync();
-
-                JObject jsonObject = JsonConvert.DeserializeObject<JObject>(content);
-                string name = jsonObject["name"].Value<string>();
-                return name;
             }
         }
     }

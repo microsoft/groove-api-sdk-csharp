@@ -4,14 +4,13 @@
 //  Licensed under the MIT License.
 //  See License in the project root for license information.
 // ------------------------------------------------------------------------------
+
 namespace Microsoft.Groove.Api.Samples
 {
     using System;
     using System.Diagnostics;
-    using System.Threading.Tasks;
     using Windows.System;
     using Windows.UI.ApplicationSettings;
-    using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -27,31 +26,26 @@ namespace Microsoft.Groove.Api.Samples
         private const string AzureDataMarketClientId = "";
         private const string AzureDataMarketClientSecret = "";
 
-        /// <summary>
-        /// The ClientInstanceId is used for streaming. You'll need to send it with every stream request.
-        /// The purpose of this ID is to identify a specific instance of your application. 
-        /// That means it should be generated once when the application is installed and persisted afterwards.
-        /// It needs to has at least 32 characters and at most 128.
-        /// It's used service-side to prevent users from streaming concurrently on multiple devices.
-        /// </summary>
-        private const string ClientInstanceId = "GrooveApiUniversalSamples42000000";
-
-        private readonly UserAccountManagerWithNotifications _userAccountManager;
+        private readonly WindowsUniversalUserAccountManager _userAccountManager;
         private readonly IGrooveClient _grooveClient;
 
         public string SearchQuery { get; set; }
         public PlayerViewModel PlayerViewModel { get; set; }
         public MusicContentPaneViewModel MusicContentPaneViewModel { get; set; }
+        public UserProfileViewModel UserProfileViewModel { get; set; }
+        public GrooveApiErrorViewModel ErrorViewModel { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
 
-            _userAccountManager = new UserAccountManagerWithNotifications();
+            _userAccountManager = new WindowsUniversalUserAccountManager();
             _grooveClient = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret, _userAccountManager);
 
-            MusicContentPaneViewModel = new MusicContentPaneViewModel();
-            PlayerViewModel = new PlayerViewModel();
+            ErrorViewModel = new GrooveApiErrorViewModel();
+            MusicContentPaneViewModel = new MusicContentPaneViewModel(_grooveClient, ErrorViewModel);
+            PlayerViewModel = new PlayerViewModel(_grooveClient, ErrorViewModel);
+            UserProfileViewModel = new UserProfileViewModel(_userAccountManager, _grooveClient, ErrorViewModel);
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -91,13 +85,7 @@ namespace Microsoft.Groove.Api.Samples
 
             if (_userAccountManager.UserIsSignedIn)
             {
-                ContentResponse playlists = await _grooveClient.BrowseAsync(
-                    MediaNamespace.music,
-                    ContentSource.Collection,
-                    ItemType.Playlists);
-
-                await HandleGrooveApiErrorAsync(playlists.Error);
-                MusicContentPaneViewModel.DisplayMusicContent(playlists);
+                await MusicContentPaneViewModel.GetPlaylistsAsync();
             }
             else
             {
@@ -111,14 +99,9 @@ namespace Microsoft.Groove.Api.Samples
         {
             ((Button)sender).IsEnabled = false;
 
-            ContentResponse searchResponse = await _grooveClient.SearchAsync(
-                MediaNamespace.music,
+            await MusicContentPaneViewModel.SearchCatalogAsync(
                 SearchQuery,
-                ContentSource.Catalog,
-                maxItems: 10);
-
-            await HandleGrooveApiErrorAsync(searchResponse.Error);
-            MusicContentPaneViewModel.DisplayMusicContent(searchResponse);
+                UserProfileViewModel.UserGrooveSubscriptionCountry);
 
             ((Button)sender).IsEnabled = true;
         }
@@ -131,29 +114,11 @@ namespace Microsoft.Groove.Api.Samples
             {
                 if (_userAccountManager.UserIsSignedIn)
                 {
-                    StreamResponse streamResponse = await _grooveClient.StreamAsync(
-                        selectedTrack.Id,
-                        ClientInstanceId);
-
-                    await HandleGrooveApiErrorAsync(streamResponse.Error);
-
-                    if (!string.IsNullOrEmpty(streamResponse.Url))
-                    {
-                        PlayerViewModel.StreamUrl = streamResponse.Url;
-                    }
+                    await PlayerViewModel.StreamAsync(selectedTrack.Id);
                 }
                 else
                 {
-                    StreamResponse previewResponse = await _grooveClient.PreviewAsync(
-                        selectedTrack.Id,
-                        ClientInstanceId);
-
-                    await HandleGrooveApiErrorAsync(previewResponse.Error);
-
-                    if (!string.IsNullOrEmpty(previewResponse.Url))
-                    {
-                        PlayerViewModel.StreamUrl = previewResponse.Url;
-                    }
+                    await PlayerViewModel.PreviewAsync(selectedTrack.Id);
                 }
             }
         }
@@ -166,25 +131,6 @@ namespace Microsoft.Groove.Api.Samples
             {
                 string deeplink = selectedTrack.Link;
                 await Launcher.LaunchUriAsync(new Uri(deeplink));
-            }
-        }
-
-        private async Task HandleGrooveApiErrorAsync(Error error)
-        {
-            if (error == null)
-            {
-                Debug.WriteLine("Successful Groove API call");
-            }
-            else
-            {
-                Debug.WriteLine($"Groove API error: {error.ErrorCode}");
-                Debug.WriteLine($"Groove API error message: {error.Message}");
-                Debug.WriteLine($"Groove API error description: {error.Description}");
-
-                MessageDialog errorPopup = new MessageDialog(
-                    $"{error.ErrorCode} : {error.Message}. {error.Description}", 
-                    "Groove API error");
-                await errorPopup.ShowAsync();
             }
         }
     }
