@@ -112,7 +112,7 @@ namespace Microsoft.Groove.Api.Samples
             Track selectedTrack = expectedSender?.DataContext as Track;
             if (selectedTrack != null)
             {
-                if (_userAccountManager.UserIsSignedIn)
+                if (_userAccountManager.UserIsSignedIn && UserProfileViewModel.UserHasGrooveSubscription)
                 {
                     await PlayerViewModel.StreamAsync(selectedTrack.Id);
                 }
