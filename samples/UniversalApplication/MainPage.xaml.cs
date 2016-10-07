@@ -27,7 +27,6 @@ namespace Microsoft.Groove.Api.Samples
         private const string AzureDataMarketClientSecret = "";
 
         private readonly WindowsUniversalUserAccountManager _userAccountManager;
-        private readonly IGrooveClient _grooveClient;
 
         public string SearchQuery { get; set; }
         public PlayerViewModel PlayerViewModel { get; set; }
@@ -40,12 +39,12 @@ namespace Microsoft.Groove.Api.Samples
             InitializeComponent();
 
             _userAccountManager = new WindowsUniversalUserAccountManager();
-            _grooveClient = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret, _userAccountManager);
+            IGrooveClient grooveClient = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret, _userAccountManager);
 
             ErrorViewModel = new GrooveApiErrorViewModel();
-            MusicContentPaneViewModel = new MusicContentPaneViewModel(_grooveClient, ErrorViewModel);
-            PlayerViewModel = new PlayerViewModel(_grooveClient, ErrorViewModel);
-            UserProfileViewModel = new UserProfileViewModel(_userAccountManager, _grooveClient, ErrorViewModel);
+            MusicContentPaneViewModel = new MusicContentPaneViewModel(grooveClient, ErrorViewModel);
+            PlayerViewModel = new PlayerViewModel(grooveClient, ErrorViewModel);
+            UserProfileViewModel = new UserProfileViewModel(_userAccountManager, grooveClient, ErrorViewModel);
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -112,14 +111,10 @@ namespace Microsoft.Groove.Api.Samples
             Track selectedTrack = expectedSender?.DataContext as Track;
             if (selectedTrack != null)
             {
-                if (_userAccountManager.UserIsSignedIn && UserProfileViewModel.UserHasGrooveSubscription)
-                {
-                    await PlayerViewModel.StreamAsync(selectedTrack.Id);
-                }
-                else
-                {
-                    await PlayerViewModel.PreviewAsync(selectedTrack.Id);
-                }
+                await PlayerViewModel.PlayTrackAsync(
+                    selectedTrack, 
+                    _userAccountManager.UserIsSignedIn, 
+                    UserProfileViewModel.UserHasGrooveSubscription);
             }
         }
 

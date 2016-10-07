@@ -7,7 +7,9 @@
 
 namespace Microsoft.Groove.Api.Samples.ViewModels
 {
+    using System;
     using System.ComponentModel;
+    using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using Client;
@@ -36,6 +38,8 @@ namespace Microsoft.Groove.Api.Samples.ViewModels
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private const string StreamRight = "stream";
+
         private readonly IGrooveClient _grooveClient;
         private readonly GrooveApiErrorViewModel _errorViewModel;
 
@@ -45,31 +49,20 @@ namespace Microsoft.Groove.Api.Samples.ViewModels
             _errorViewModel = errorViewModel;
         }
 
-        public async Task StreamAsync(string trackId)
+        public async Task PlayTrackAsync(Track track, bool userIsSignedIn, bool userHasSubscription)
         {
-            StreamResponse streamResponse = await _grooveClient.StreamAsync(
-                trackId,
-                StreamClientInstanceId.GetStableClientInstanceId());
+            bool trackCanBeStreamed = track.Rights != null 
+                && track.Rights.Any(right => right.Equals(StreamRight, StringComparison.OrdinalIgnoreCase));
+
+            StreamResponse streamResponse = trackCanBeStreamed && userIsSignedIn && userHasSubscription
+                ? await _grooveClient.StreamAsync(track.Id, StreamClientInstanceId.GetStableClientInstanceId())
+                : await _grooveClient.PreviewAsync(track.Id, StreamClientInstanceId.GetStableClientInstanceId());
 
             await _errorViewModel.HandleGrooveApiErrorAsync(streamResponse.Error);
 
             if (!string.IsNullOrEmpty(streamResponse.Url))
             {
                 StreamUrl = streamResponse.Url;
-            }
-        }
-
-        public async Task PreviewAsync(string trackId)
-        {
-            StreamResponse previewResponse = await _grooveClient.PreviewAsync(
-                trackId,
-                StreamClientInstanceId.GetStableClientInstanceId());
-
-            await _errorViewModel.HandleGrooveApiErrorAsync(previewResponse.Error);
-
-            if (!string.IsNullOrEmpty(previewResponse.Url))
-            {
-                StreamUrl = previewResponse.Url;
             }
         }
     }
