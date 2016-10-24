@@ -17,17 +17,56 @@ namespace Microsoft.Groove.Api.Samples.ViewModels
 
     public class MusicContentPaneViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Track> Tracks { get; set; }
-        public ObservableCollection<Album> Albums { get; set; }
-        public ObservableCollection<Artist> Artists { get; set; }
-        public ObservableCollection<Playlist> Playlists { get; set; }
+        private ObservableCollection<Track> _tracks;
+        public ObservableCollection<Track> Tracks
+        {
+            get {return _tracks;}
+            set
+            {
+                _tracks = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private ObservableCollection<Album> _albums;
+        public ObservableCollection<Album> Albums
+        {
+            get { return _albums; }
+            set
+            {
+                _albums = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private ObservableCollection<Artist> _artists;
+        public ObservableCollection<Artist> Artists
+        {
+            get { return _artists; }
+            set
+            {
+                _artists = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private ObservableCollection<Playlist> _playlists;
+        public ObservableCollection<Playlist> Playlists
+        {
+            get { return _playlists; }
+            set
+            {
+                _playlists = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             // Raise the PropertyChanged event, passing the name of the property whose value has changed.
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private readonly IGrooveClient _grooveClient;

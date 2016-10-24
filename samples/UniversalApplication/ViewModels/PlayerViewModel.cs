@@ -19,23 +19,22 @@ namespace Microsoft.Groove.Api.Samples.ViewModels
     public class PlayerViewModel : INotifyPropertyChanged
     {
         private string _streamUrl;
-
         public string StreamUrl
         {
             get {return _streamUrl;}
             set
             {
                 _streamUrl = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             // Raise the PropertyChanged event, passing the name of the property whose value has changed.
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private const string StreamRight = "stream";

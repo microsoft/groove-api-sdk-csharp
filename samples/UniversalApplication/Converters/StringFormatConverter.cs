@@ -8,6 +8,7 @@
 namespace Microsoft.Groove.Api.Samples.Converters
 {
     using System;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
 
     public class StringFormatConverter : IValueConverter
@@ -25,7 +26,7 @@ namespace Microsoft.Groove.Api.Samples.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return DependencyProperty.UnsetValue;
         }
     }
 }

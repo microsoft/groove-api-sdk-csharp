@@ -9,6 +9,7 @@ namespace Microsoft.Groove.Api.Samples.Converters
 {
     using System;
     using Windows.Media.Core;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
 
     public class StreamUrlConverter : IValueConverter
@@ -27,7 +28,7 @@ namespace Microsoft.Groove.Api.Samples.Converters
         // No need to implement converting back on a one-way binding
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return DependencyProperty.UnsetValue;
         }
     }
 }

@@ -14,46 +14,106 @@
         <converters:ImageUrlSizeConverter x:Key="ImageUrlSizeConverter"/>
         <converters:StreamUrlConverter x:Key="StreamUrlConverter"/>
         <converters:StringFormatConverter x:Key="StringFormatConverter"/>
+        <Style TargetType="TextBlock"
+               x:Key="DefaultText">
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="4" />
+        </Style>
+        <Style BasedOn="{StaticResource DefaultText}"
+               TargetType="TextBlock"
+               x:Key="ItalicText">
+            <Setter Property="FontStyle" Value="Italic" />
+        </Style>
+        <Style BasedOn="{StaticResource DefaultText}"
+               TargetType="TextBlock" 
+               x:Key="CategoryTitle">
+            <Setter Property="TextAlignment" Value="Left" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style TargetType="TextBlock"
+               x:Key="ContentItemTitle">
+            <Setter Property="MaxWidth" Value="200" />
+        </Style>
+        <Style BasedOn="{StaticResource ContentItemTitle}" 
+               TargetType="TextBlock"
+               x:Key="ContentItemSubTitle">
+            <Setter Property="FontWeight" Value="Light" />
+            <Setter Property="FontStyle" Value="Oblique" />
+        </Style>
+        <Style TargetType="Rectangle">
+            <Setter Property="Fill" Value="DarkGray" />
+            <Setter Property="Height" Value="2px" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="4" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <Style TargetType="Image"
+               x:Key="ContentItemCover">
+            <Setter Property="Height" Value="200" />
+            <Setter Property="Width" Value="200" />
+        </Style>
+        <Style TargetType="GridView">
+            <Setter Property="MaxHeight" Value="250" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="ShowsScrollingPlaceholders" Value="true" />
+        </Style>
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0" Background="LightGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" VerticalAlignment="Top">
-                <TextBlock Text="Test Scenarios" TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <Rectangle Fill="DarkGray" Height="2px" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <TextBlock Text="Search" FontStyle="Italic" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <Grid Margin="5">
+            <StackPanel Grid.Row="0" 
+                        VerticalAlignment="Top">
+                <TextBlock Text="Test Scenarios" Style="{StaticResource DefaultText}" />
+                <Rectangle />
+                <TextBlock Text="Search" Style="{StaticResource ItalicText}" />
+                <Grid Margin="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="SearchBox" Text="{x:Bind Path=SearchQuery, Mode=TwoWay}" Grid.Column="0" />
-                    <Button x:Name="SearchButton" Content="Go" Click="SearchButton_OnClick" Grid.Column="1" Margin="5,0,0,0" />
+                    <TextBox Text="{x:Bind Path=SearchQuery, Mode=TwoWay}" 
+                             Grid.Column="0" />
+                    <Button x:Name="SearchButton" 
+                            Content="Go" 
+                            Click="SearchButton_OnClick" 
+                            Grid.Column="1" />
                 </Grid>
-                <Rectangle Fill="DarkGray" Height="2px" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <TextBlock Text="User Content" FontStyle="Italic" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <Button x:Name="PlaylistsButton" Content="Playlists" Click="PlaylistsButton_OnClick" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
+                <Rectangle />
+                <TextBlock Text="User Content" Style="{StaticResource ItalicText}" />
+                <Button x:Name="PlaylistsButton" 
+                        Content="Playlists" 
+                        Click="PlaylistsButton_OnClick" />
             </StackPanel>
             
-            <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
-                <Rectangle Fill="DarkGray" Height="2px" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserName, Mode=OneWay}" TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserHasGrooveSubscription, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Groove Premium: {0}'}" 
-                           TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserGrooveSubscriptionCountry, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Groove Country: {0}'}" 
-                           TextAlignment="Center" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <Button Content="{x:Bind Path=UserProfileViewModel.UserIsSignedIn, Mode=OneWay, Converter={StaticResource SignInButtonTextConverter}}" Click="SignInButton_Click" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
+            <StackPanel Grid.Row="1" 
+                        VerticalAlignment="Bottom">
+                <Rectangle />
+                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserName, Mode=OneWay}" 
+                           Style="{StaticResource DefaultText}" />
+                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserHasGrooveSubscription, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Groove Premium: {0}'}"
+                           Style="{StaticResource DefaultText}"/>
+                <TextBlock Text="{x:Bind Path=UserProfileViewModel.UserGrooveSubscriptionCountry, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}Groove Country: {0}'}"
+                           Style="{StaticResource DefaultText}"/>
+                <Button Content="{x:Bind Path=UserProfileViewModel.UserIsSignedIn, Mode=OneWay, Converter={StaticResource SignInButtonTextConverter}}" 
+                        Click="SignInButton_Click" />
             </StackPanel>
         </Grid>
 
@@ -63,25 +123,27 @@
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="2*" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
-                <TextBlock Text="Tracks" FontWeight="Bold" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <GridView ItemsSource="{x:Bind Path=MusicContentPaneViewModel.Tracks}" MaxHeight="250" Margin="5" ShowsScrollingPlaceholders="True">
+                <TextBlock Text="Tracks" Style="{StaticResource CategoryTitle}" />
+                <GridView ItemsSource="{x:Bind Path=MusicContentPaneViewModel.Tracks}">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="dataContract:Track">
-                            <StackPanel Margin="5">
+                            <StackPanel Margin="4">
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Height="150" Width="150" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=150}" />
+                                    <Image Height="150" 
+                                           Width="150" 
+                                           Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=150}" />
                                     <StackPanel Width="50" Height="150">
-                                        <SymbolIcon Symbol="Play" Height="40" Width="40" Tapped="PlayButton_OnTapped" Margin="5" />
-                                        <SymbolIcon Symbol="Link" Height="40" Width="40" Tapped="DeeplinkButton_OnTapped" Margin="5,0,5,0" />
-                                        <SymbolIcon Symbol="More" Height="40" Width="40" Margin="5" />
+                                        <SymbolIcon Symbol="Play" Height="40" Width="40" Tapped="PlayButton_OnTapped" Margin="4" />
+                                        <SymbolIcon Symbol="Link" Height="40" Width="40" Tapped="DeeplinkButton_OnTapped" Margin="4,0,4,0" />
+                                        <SymbolIcon Symbol="More" Height="40" Width="40" Margin="4" />
                                     </StackPanel>
                                 </StackPanel>
-                                <TextBlock Text="{x:Bind Path=Name}" MaxWidth="200" />
-                                <TextBlock Text="{x:Bind Path=Album.Name}" FontWeight="Light" FontStyle="Oblique" MaxWidth="200" />
+                                <TextBlock Text="{x:Bind Path=Name}" Style="{StaticResource ContentItemTitle}" />
+                                <TextBlock Text="{x:Bind Path=Album.Name}" Style="{StaticResource ContentItemSubTitle}" />
                             </StackPanel>
                         </DataTemplate>
                     </GridView.ItemTemplate>
@@ -89,14 +151,15 @@
             </StackPanel>
 
             <StackPanel Grid.Row="1">
-                <TextBlock Text="Albums" FontWeight="Bold" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <GridView ItemsSource="{x:Bind Path=MusicContentPaneViewModel.Albums}" MaxHeight="250" Margin="5" ShowsScrollingPlaceholders="True">
+                <TextBlock Text="Albums" Style="{StaticResource CategoryTitle}" />
+                <GridView ItemsSource="{x:Bind Path=MusicContentPaneViewModel.Albums}">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="dataContract:Album">
-                            <StackPanel Margin="5">
-                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
-                                <TextBlock Text="{x:Bind Path=Name}" MaxWidth="200" />
-                                <TextBlock Text="{x:Bind Path=Subtitle}" FontWeight="Light" FontStyle="Oblique" MaxWidth="200" />
+                            <StackPanel Margin="4">
+                                <Image Style="{StaticResource ContentItemCover}" 
+                                       Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
+                                <TextBlock Text="{x:Bind Path=Name}" Style="{StaticResource ContentItemTitle}" />
+                                <TextBlock Text="{x:Bind Path=Subtitle}" Style="{StaticResource ContentItemSubTitle}" />
                             </StackPanel>
                         </DataTemplate>
                     </GridView.ItemTemplate>
@@ -104,13 +167,14 @@
             </StackPanel>
             
             <StackPanel Grid.Row="2">
-                <TextBlock Text="Artists" FontWeight="Bold" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <GridView ItemsSource="{x:Bind Path=MusicContentPaneViewModel.Artists}" MaxHeight="250" Margin="5" ShowsScrollingPlaceholders="True">
+                <TextBlock Text="Artists" Style="{StaticResource CategoryTitle}" />
+                <GridView ItemsSource="{x:Bind Path=MusicContentPaneViewModel.Artists}">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="dataContract:Artist">
-                            <StackPanel Margin="5">
-                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
-                                <TextBlock Text="{x:Bind Path=Name}" MaxWidth="200" />
+                            <StackPanel Margin="4">
+                                <Image Style="{StaticResource ContentItemCover}" 
+                                       Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
+                                <TextBlock Text="{x:Bind Path=Name}" Style="{StaticResource ContentItemTitle}" />
                             </StackPanel>
                         </DataTemplate>
                     </GridView.ItemTemplate>
@@ -118,13 +182,14 @@
             </StackPanel>
 
             <StackPanel Grid.Row="3">
-                <TextBlock Text="Playlists" FontWeight="Bold" Width="Auto" HorizontalAlignment="Stretch" Margin="5" />
-                <GridView ItemsSource="{x:Bind Path=MusicContentPaneViewModel.Playlists}" MaxHeight="250" Margin="5" ShowsScrollingPlaceholders="True">
+                <TextBlock Text="Playlists" Style="{StaticResource CategoryTitle}" />
+                <GridView ItemsSource="{x:Bind Path=MusicContentPaneViewModel.Playlists}">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="dataContract:Playlist">
-                            <StackPanel Margin="5">
-                                <Image Height="200" Width="200" Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
-                                <TextBlock Text="{x:Bind Path=Name}" MaxWidth="200" />
+                            <StackPanel Margin="4">
+                                <Image Style="{StaticResource ContentItemCover}" 
+                                       Source="{x:Bind Path=ImageUrl, Converter={StaticResource ImageUrlSizeConverter}, ConverterParameter=200}" />
+                                <TextBlock Text="{x:Bind Path=Name}" Style="{StaticResource ContentItemTitle}" />
                             </StackPanel>
                         </DataTemplate>
                     </GridView.ItemTemplate>
