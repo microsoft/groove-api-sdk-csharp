@@ -12,53 +12,53 @@ namespace Microsoft.Groove.Api.Client
     public static class GrooveClientFactory
     {
         /// <summary>
-        /// We will reuse Azure Data Market tokens as much as possible.
+        /// We will reuse MSA tokens as much as possible.
         /// </summary>
-        private static readonly Dictionary<string, AzureDataMarketAuthenticationCache> AzureDataMarketAuthenticationCaches =
-            new Dictionary<string, AzureDataMarketAuthenticationCache>();
+        private static readonly Dictionary<string, MicrosoftAccountAuthenticationCache> MicrosoftAccountAuthenticationCaches =
+            new Dictionary<string, MicrosoftAccountAuthenticationCache>();
 
         /// <summary>
         /// Create a Groove client with user authentication.
         /// </summary>
-        /// <param name="azureDataMarketClientId">Azure Data Market application client id</param>
-        /// <param name="azureDataMarketClientSecret">Azure Data Market application secret</param>
+        /// <param name="microsoftAppClientId">Microsoft application client id</param>
+        /// <param name="microsoftAppClientSecret">Microsoft application secret</param>
         /// <param name="userTokenManager"><see cref="IUserTokenManager"/> implementation</param>
         public static IGrooveClient CreateGrooveClient(
-            string azureDataMarketClientId, 
-            string azureDataMarketClientSecret, 
+            string microsoftAppClientId, 
+            string microsoftAppClientSecret, 
             IUserTokenManager userTokenManager)
         {
             return new GrooveClient(
-                GetOrAddAzureDataMarketAuthenticationCache(azureDataMarketClientId, azureDataMarketClientSecret), 
+                GetOrAddMicrosoftAccountAuthenticationCache(microsoftAppClientId, microsoftAppClientSecret), 
                 userTokenManager);
         }
 
         /// <summary>
         /// Create a Groove client without user authentication.
         /// </summary>
-        /// <param name="azureDataMarketClientId">Azure Data Market application client id</param>
-        /// <param name="azureDataMarketClientSecret">Azure Data Market application secret</param>
+        /// <param name="microsoftAppClientId">Microsoft application client id</param>
+        /// <param name="microsoftAppClientSecret">Microsoft application secret</param>
         public static IGrooveClient CreateGrooveClient(
-            string azureDataMarketClientId,
-            string azureDataMarketClientSecret)
+            string microsoftAppClientId,
+            string microsoftAppClientSecret)
         {
-            return new GrooveClient(GetOrAddAzureDataMarketAuthenticationCache(azureDataMarketClientId, azureDataMarketClientSecret));
+            return new GrooveClient(GetOrAddMicrosoftAccountAuthenticationCache(microsoftAppClientId, microsoftAppClientSecret));
         }
 
-        private static AzureDataMarketAuthenticationCache GetOrAddAzureDataMarketAuthenticationCache(
-            string azureDataMarketClientId,
-            string azureDataMarketClientSecret)
+        private static MicrosoftAccountAuthenticationCache GetOrAddMicrosoftAccountAuthenticationCache(
+            string microsoftAppClientId,
+            string microsoftAppClientSecret)
         {
-            if (!AzureDataMarketAuthenticationCaches.ContainsKey(azureDataMarketClientId))
+            if (!MicrosoftAccountAuthenticationCaches.ContainsKey(microsoftAppClientId))
             {
-                AzureDataMarketAuthenticationCache azureDataMarketAuthenticationCache = new AzureDataMarketAuthenticationCache(
-                    azureDataMarketClientId,
-                    azureDataMarketClientSecret);
+                MicrosoftAccountAuthenticationCache microsoftAccountAuthenticationCache = new MicrosoftAccountAuthenticationCache(
+                    microsoftAppClientId,
+                    microsoftAppClientSecret);
 
-                AzureDataMarketAuthenticationCaches[azureDataMarketClientId] = azureDataMarketAuthenticationCache;
+                MicrosoftAccountAuthenticationCaches[microsoftAppClientId] = microsoftAccountAuthenticationCache;
             }
 
-            return AzureDataMarketAuthenticationCaches[azureDataMarketClientId];
+            return MicrosoftAccountAuthenticationCaches[microsoftAppClientId];
         }
     }
 }

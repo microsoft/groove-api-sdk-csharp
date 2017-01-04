@@ -18,10 +18,10 @@ namespace Microsoft.Groove.Api.Client.Tests
         [TestMethod, TestCategory("Unauthenticated"), TestCategory("GettingStarted")]
         public async Task HelpYouGetStarted()
         {
-            // Start by registering an Azure Data Market client ID and secret (see http://music.microsoft.com/developer)
+            // Start by registering an Application on the Groove API Program (see https://developer.microsoft.com/dashboard/groove)
 
             // Create a client
-            IGrooveClient client = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret);
+            IGrooveClient client = GrooveClientFactory.CreateGrooveClient(MicrosoftAppClientId, MicrosoftAppClientSecret);
 
             // Use null to get your current geography.
             // Specify a 2 letter country code (such as "US" or "DE") to force a specific country.

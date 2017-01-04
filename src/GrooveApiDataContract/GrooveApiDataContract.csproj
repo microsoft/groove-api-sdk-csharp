@@ -41,7 +41,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthenticationDataContract\AzureDataMarketAuthenticationResponse.cs" />
+    <Compile Include="AuthenticationDataContract\MicrosoftAccountAuthenticationResponse.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataContract\Album.cs" />
     <Compile Include="DataContract\Artist.cs" />
