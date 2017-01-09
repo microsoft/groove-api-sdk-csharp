@@ -74,6 +74,20 @@ namespace Microsoft.Groove.Api.Client.Tests
         }
 
         [TestMethod, TestCategory("Unauthenticated")]
+        public async Task BrowsePlaylistsByMoodOrActivity()
+        {
+            // Get playlists with mood "Chill" for country FR
+            ContentResponse browseMoodResult = await Client.BrowseAsync(MediaNamespace.music, ContentSource.Catalog, ItemType.Playlists, mood: "Chill", country: "FR").Log();
+            Assert.IsNotNull(browseMoodResult, "The browse response should not be null");
+            AssertPaginatedListIsValid(browseMoodResult.Playlists, 25, 100);
+
+            // Get playlists with activity "Party" for country US
+            ContentResponse browseActivityResults = await Client.BrowseAsync(MediaNamespace.music, ContentSource.Catalog, ItemType.Playlists, activity: "Party", country: "US").Log();
+            Assert.IsNotNull(browseActivityResults, "The browse response should not be null");
+            AssertPaginatedListIsValid(browseActivityResults.Playlists, 25, 100);
+        }
+
+        [TestMethod, TestCategory("Unauthenticated")]
         public async Task BrowseGenres()
         {
             // This test will fail if this computer's current geography is not valid for Groove Music catalog content or
@@ -86,6 +100,28 @@ namespace Microsoft.Groove.Api.Client.Tests
             Assert.IsNotNull(genreResults.Genres, "The browse response should contain genres");
             Assert.IsTrue(0 < genreResults.Genres.Count, "The browse response should contain at least one genre");
             Assert.IsNotNull(genreResults.Culture, "The genre response should contain the applicable culture");
+        }
+
+        [TestMethod, TestCategory("Unauthenticated")]
+        public async Task BrowseMoods()
+        {
+            ContentResponse moodResults = await Client.BrowseMoodsAsync(MediaNamespace.music, "US", "en").Log();
+            Assert.IsNotNull(moodResults, "The browseMoods response should not be null");
+            Console.WriteLine($"Culture: {moodResults.Culture}");
+            Assert.IsNotNull(moodResults.CatalogMoods, "The browseMoods response should contain moods");
+            Assert.IsTrue(0 < moodResults.CatalogMoods.Count, "The browseMoods response should contain at least one mood");
+            Assert.IsNotNull(moodResults.Culture, "The browseMoods response should contain the applicable culture");
+        }
+
+        [TestMethod, TestCategory("Unauthenticated")]
+        public async Task BrowseActivities()
+        {
+            ContentResponse activityResults = await Client.BrowseActivitiesAsync(MediaNamespace.music, "US", "en").Log();
+            Assert.IsNotNull(activityResults, "The browseActivities response should not be null");
+            Console.WriteLine($"Culture: {activityResults.Culture}");
+            Assert.IsNotNull(activityResults.CatalogActivities, "The browseActivities response should contain activities");
+            Assert.IsTrue(0 < activityResults.CatalogActivities.Count, "The browseActivities response should contain at least one activity");
+            Assert.IsNotNull(activityResults.Culture, "The browseActivities response should contain the applicable culture");
         }
     }
 }
