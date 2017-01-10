@@ -30,30 +30,30 @@ namespace Microsoft.Groove.Api.Client
         }
 
         // This doesn't get disposed when this object gets disposed because it can be shared with other clients.
-        private readonly AzureDataMarketAuthenticationCache _azureDataMarketAuthenticationCache;
+        private readonly MicrosoftAccountAuthenticationCache _microsoftAccountAuthenticationCache;
         private readonly IUserTokenManager _userTokenManager;
 
-        internal GrooveClient(AzureDataMarketAuthenticationCache azureDataMarketAuthenticationCache)
+        internal GrooveClient(MicrosoftAccountAuthenticationCache microsoftAccountAuthenticationCache)
         {
-            _azureDataMarketAuthenticationCache = azureDataMarketAuthenticationCache;
+            _microsoftAccountAuthenticationCache = microsoftAccountAuthenticationCache;
         }
 
-        internal GrooveClient(AzureDataMarketAuthenticationCache azureDataMarketAuthenticationCache, IUserTokenManager userTokenManager)
-            : this(azureDataMarketAuthenticationCache)
+        internal GrooveClient(MicrosoftAccountAuthenticationCache microsoftAccountAuthenticationCache, IUserTokenManager userTokenManager)
+            : this(microsoftAccountAuthenticationCache)
         {
             _userTokenManager = userTokenManager;
         }
 
         #region Search
         private async Task<ContentResponse> SearchApiAsync(
-            MediaNamespace mediaNamespace, 
-            string query = null, 
+            MediaNamespace mediaNamespace,
+            string query = null,
             ContentSource? source = null,
-            SearchFilter filter = 
-            SearchFilter.Default, 
-            string language = null, 
+            SearchFilter filter =
+            SearchFilter.Default,
+            string language = null,
             string country = null,
-            int? maxItems = null, 
+            int? maxItems = null,
             string continuationToken = null)
         {
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(continuationToken, language, country, source);
@@ -79,7 +79,7 @@ namespace Microsoft.Groove.Api.Client
             }
             else
             {
-                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+                Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
 
                 return await GetAsync<ContentResponse>(
                     Hostname,
@@ -112,10 +112,10 @@ namespace Microsoft.Groove.Api.Client
 
         #region Lookup
         private async Task<ContentResponse> LookupApiAsync(
-            IEnumerable<string> itemIds, 
+            IEnumerable<string> itemIds,
             ContentSource? source = null,
-            string language = null, 
-            string country = null, 
+            string language = null,
+            string country = null,
             ExtraDetails extras = ExtraDetails.None,
             string continuationToken = null)
         {
@@ -143,7 +143,7 @@ namespace Microsoft.Groove.Api.Client
             }
             else
             {
-                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+                Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
                 return await GetAsync<ContentResponse>(
                     Hostname,
                     $"/1/content/{ids}/lookup",
@@ -190,15 +190,15 @@ namespace Microsoft.Groove.Api.Client
 
         #region Browse
         private async Task<ContentResponse> BrowseApiAsync(
-            MediaNamespace mediaNamespace, 
-            ContentSource source, 
+            MediaNamespace mediaNamespace,
+            ContentSource source,
             ItemType type,
             string genre = null,
-            OrderBy? orderBy = null, 
-            int? maxItems = null, 
+            OrderBy? orderBy = null,
+            int? maxItems = null,
             int? page = null,
-            string country = null, 
-            string language = null, 
+            string country = null,
+            string language = null,
             string continuationToken = null)
         {
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(continuationToken, language, country);
@@ -227,7 +227,7 @@ namespace Microsoft.Groove.Api.Client
             }
             else
             {
-                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+                Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
                 return await GetAsync<ContentResponse>(
                     Hostname,
                     $"/1/content/{mediaNamespace}/{source}/{type}/browse",
@@ -261,15 +261,15 @@ namespace Microsoft.Groove.Api.Client
         }
 
         private async Task<ContentResponse> SubBrowseApiAsync(
-            string id, 
-            ContentSource source, 
-            BrowseItemType browseType, 
-            ExtraDetails extra, 
-            OrderBy? orderBy = null, 
-            int? maxItems = null, 
-            int? page = null, 
-            string language = null, 
-            string country = null, 
+            string id,
+            ContentSource source,
+            BrowseItemType browseType,
+            ExtraDetails extra,
+            OrderBy? orderBy = null,
+            int? maxItems = null,
+            int? page = null,
+            string language = null,
+            string country = null,
             string continuationToken = null)
         {
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(continuationToken, language, country);
@@ -295,7 +295,7 @@ namespace Microsoft.Groove.Api.Client
             }
             else
             {
-                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+                Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
                 return await GetAsync<ContentResponse>(
                     Hostname,
                     $"/1/content/{id}/{source}/{browseType}/{extra}/browse",
@@ -306,24 +306,24 @@ namespace Microsoft.Groove.Api.Client
         }
 
         public Task<ContentResponse> SubBrowseAsync(
-            string id, 
-            ContentSource source, 
-            BrowseItemType browseType, 
-            ExtraDetails extra, 
-            OrderBy? orderBy = null, 
-            int? maxItems = null, 
-            int? page = null, 
-            string language = null, 
+            string id,
+            ContentSource source,
+            BrowseItemType browseType,
+            ExtraDetails extra,
+            OrderBy? orderBy = null,
+            int? maxItems = null,
+            int? page = null,
+            string language = null,
             string country = null)
         {
             return SubBrowseApiAsync(id, source, browseType, extra, orderBy, maxItems, page, language, country);
         }
 
         public Task<ContentResponse> SubBrowseContinuationAsync(
-            string id, 
-            ContentSource source, 
-            BrowseItemType browseType, 
-            ExtraDetails extra, 
+            string id,
+            ContentSource source,
+            BrowseItemType browseType,
+            ExtraDetails extra,
             string continuationToken)
         {
             return SubBrowseApiAsync(id, source, browseType, extra, continuationToken: continuationToken);
@@ -332,22 +332,22 @@ namespace Microsoft.Groove.Api.Client
 
         #region Discovery
         private async Task<ContentResponse> DiscoverAsync(
-            MediaNamespace mediaNamespace, 
+            MediaNamespace mediaNamespace,
             string type,
-            string country = null, 
-            string language = null, 
+            string country = null,
+            string language = null,
             string genre = null)
         {
-            Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+            Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(language: language, country: country);
 
             if (!string.IsNullOrEmpty(genre))
                 requestParameters.Add("genre", genre);
 
             return await GetAsync<ContentResponse>(
-                Hostname, 
+                Hostname,
                 $"/1/content/{mediaNamespace}/{type}",
-                new CancellationToken(false), 
+                new CancellationToken(false),
                 requestParameters,
                 requestHeaders);
         }
@@ -374,20 +374,22 @@ namespace Microsoft.Groove.Api.Client
             string country = null,
             string language = null)
         {
+            Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(language: language, country: country);
             return await GetAsync<ContentResponse>(
                 Hostname,
                 $"/1/content/{mediaNamespace}/catalog/genres",
                 new CancellationToken(false),
-                requestParameters);
+                requestParameters,
+                requestHeaders);
         }
         #endregion
 
         #region Location
         private async Task<StreamResponse> LocationAsync(
-            string id, 
+            string id,
             string clientInstanceId,
-            string type, 
+            string type,
             string country = null)
         {
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(country: country);
@@ -407,7 +409,7 @@ namespace Microsoft.Groove.Api.Client
             }
             else
             {
-                Dictionary<string, string> requestHeaders = FormatRequestHeaders(null);
+                Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
                 return await GetAsync<StreamResponse>(
                     Hostname,
                     $"/1/content/{id}/{type}",
@@ -435,8 +437,8 @@ namespace Microsoft.Groove.Api.Client
 
         #region Collection
         public async Task<TrackActionResponse> CollectionOperationAsync(
-            MediaNamespace mediaNamespace, 
-            TrackActionType operation, 
+            MediaNamespace mediaNamespace,
+            TrackActionType operation,
             TrackActionRequest trackActionRequest)
         {
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync();
@@ -452,7 +454,7 @@ namespace Microsoft.Groove.Api.Client
         }
 
         public async Task<PlaylistActionResponse> PlaylistOperationAsync(
-            MediaNamespace mediaNamespace, 
+            MediaNamespace mediaNamespace,
             PlaylistActionType operation,
             PlaylistAction playlistAction)
         {
@@ -497,7 +499,7 @@ namespace Microsoft.Groove.Api.Client
                 throw new ArgumentNullException("UserAuthorizationHeader", "Couldn't obtain a user authorization header");
             }
 
-            Dictionary<string, string> requestHeaders = FormatRequestHeaders(userAuthorizationHeader);
+            Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(userAuthorizationHeader);
 
             TResponse response = await apiCall(requestHeaders);
 
@@ -509,7 +511,7 @@ namespace Microsoft.Groove.Api.Client
                     throw new ArgumentNullException("UserAuthorizationHeader", "Couldn't obtain a user authorization header");
                 }
 
-                requestHeaders = FormatRequestHeaders(userAuthorizationHeader);
+                requestHeaders = await FormatRequestHeadersAsync(userAuthorizationHeader);
                 response = await apiCall(requestHeaders);
             }
 
@@ -518,16 +520,11 @@ namespace Microsoft.Groove.Api.Client
 
         private async Task<Dictionary<string, string>> FormatRequestParametersAsync(
             string continuationToken = null,
-            string language = null, 
-            string country = null, 
+            string language = null,
+            string country = null,
             ContentSource? source = null)
         {
-            AzureDataMarketAuthenticationCache.AccessToken token = await _azureDataMarketAuthenticationCache.CheckAndRenewTokenAsync(new CancellationToken(false));
-
-            Dictionary<string, string> requestParameters = new Dictionary<string, string>
-            {
-                {"accessToken", Uri.EscapeDataString("Bearer " + token.Token)}
-            };
+            Dictionary<string, string> requestParameters = new Dictionary<string, string>();
 
             if (!string.IsNullOrEmpty(continuationToken))
                 requestParameters.Add("continuationToken", continuationToken);
@@ -547,7 +544,7 @@ namespace Microsoft.Groove.Api.Client
             return requestParameters;
         }
 
-        private static Dictionary<string, string> FormatRequestHeaders(string userAuthorizationHeader)
+        private async Task<Dictionary<string, string>> FormatRequestHeadersAsync(string userAuthorizationHeader)
         {
             Dictionary<string, string> headersToSend = new Dictionary<string, string>
             {
@@ -558,6 +555,13 @@ namespace Microsoft.Groove.Api.Client
             if (userAuthorizationHeader != null)
             {
                 headersToSend.Add("Authorization", userAuthorizationHeader);
+            }
+            else
+            {
+                MicrosoftAccountAuthenticationCache.AccessToken token =
+                    await _microsoftAccountAuthenticationCache.CheckAndRenewTokenAsync(new CancellationToken(false));
+
+                headersToSend.Add("Authorization", "Bearer " + token.Token);
             }
 
             return headersToSend;

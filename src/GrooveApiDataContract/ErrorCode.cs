@@ -123,27 +123,27 @@ namespace Microsoft.Groove.Api.DataContract
         #endregion
 
         #region AccessToken errors
-        [Description("Azure Marketplace access token required")]
+        [Description("Application access token required")]
         [StatusCode(HttpStatusCode.Unauthorized)]
         ACCESS_TOKEN_MISSING,
 
-        [Description("Invalid Azure Marketplace token")]
+        [Description("Invalid Application access token")]
         [StatusCode(HttpStatusCode.Unauthorized)]
         ACCESS_TOKEN_INVALID,
 
-        [Description("Expired Azure Marketplace token")]
+        [Description("Expired Application access token")]
         [StatusCode(HttpStatusCode.Unauthorized)]
         ACCESS_TOKEN_EXPIRED,
 
-        [Description("Unexpected error while validating Azure Marketplace token")]
+        [Description("Unexpected error while validating Application access token")]
         [StatusCode(HttpStatusCode.InternalServerError)]
         ACCESS_TOKEN_VALIDATION_ERROR,
 
-        [Description("Azure Marketplace client id is not a subscriber to the Groove data offer")]
+        [Description("The Microsoft Application is not a subscriber to the Groove data offer")]
         [StatusCode(HttpStatusCode.Unauthorized)]
         ACCESS_TOKEN_INVALID_SUBSCRIPTION,
 
-        [Description("Unexpected error while validating Azure Marketplace subscription status")]
+        [Description("Unexpected error while validating Microsoft App subscription status")]
         [StatusCode(HttpStatusCode.InternalServerError)]
         ACCESS_TOKEN_SUBSCRIPTION_VALIDATION_ERROR,
         #endregion

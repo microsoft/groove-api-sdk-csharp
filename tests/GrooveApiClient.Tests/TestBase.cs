@@ -19,25 +19,25 @@ namespace Microsoft.Groove.Api.Client.Tests
         // When implementing real calls, use a unique stable client instance id per client id.
         protected const string ClientInstanceId = "GrooveClientTests12345678901234567890";
 
-        protected static string AzureDataMarketClientId { get; }
-        protected static string AzureDataMarketClientSecret { get; }
+        protected static string MicrosoftAppClientId { get; }
+        protected static string MicrosoftAppClientSecret { get; }
 
         static TestBase()
         {
-            AzureDataMarketClientId = ConfigurationManager.AppSettings["clientid"];
-            AzureDataMarketClientSecret = ConfigurationManager.AppSettings["clientsecret"];
+            MicrosoftAppClientId = ConfigurationManager.AppSettings["clientid"];
+            MicrosoftAppClientSecret = ConfigurationManager.AppSettings["clientsecret"];
 
-            Assert.IsNotNull(AzureDataMarketClientId, "The client id should be set in App.config");
-            Assert.IsNotNull(AzureDataMarketClientSecret, "The client secret should be set in App.config");
-            Assert.IsFalse(AzureDataMarketClientSecret.Contains("%"), "The client secret should not be URL encoded");
+            Assert.IsNotNull(MicrosoftAppClientId, "The client id should be set in App.config");
+            Assert.IsNotNull(MicrosoftAppClientSecret, "The client secret should be set in App.config");
+            Assert.IsFalse(MicrosoftAppClientSecret.Contains("%"), "The client secret should not be URL encoded");
 
             Client = GrooveClientFactory.CreateGrooveClient(
-                AzureDataMarketClientId,
-                AzureDataMarketClientSecret);
+                MicrosoftAppClientId,
+                MicrosoftAppClientSecret);
 
             UserAuthenticatedClient = GrooveClientFactory.CreateGrooveClient(
-                AzureDataMarketClientId,
-                AzureDataMarketClientSecret, 
+                MicrosoftAppClientId,
+                MicrosoftAppClientSecret, 
                 new TestUserTokenManagerFromConfigurationValue());
         }
 
