@@ -22,9 +22,11 @@ namespace Microsoft.Groove.Api.Samples
     public sealed partial class MainPage : Page
     {
         // Provide your own values here
-        // See https://github.com/Microsoft/Groove-API-documentation/blob/master/Main/Using%20the%20Groove%20RESTful%20Services/Obtaining%20a%20Developer%20Access%20Token.md
-        private const string AzureDataMarketClientId = "";
-        private const string AzureDataMarketClientSecret = "";
+        // See https://review.docs.microsoft.com/en-us/groove/using-the-groove-restful-services/obtaining-a-developer-access-token
+        // WARNING: this is used here as an example but authentication for Universal Windows App should be done only using User
+        // auth (cf. WindowsUniversalUserAccountManager) since you should not to put your Application secret in a client app.
+        private const string ApplicationClientId = "";
+        private const string ApplicationClientSecret = "";
 
         private readonly WindowsUniversalUserAccountManager _userAccountManager;
 
@@ -39,7 +41,7 @@ namespace Microsoft.Groove.Api.Samples
             InitializeComponent();
 
             _userAccountManager = new WindowsUniversalUserAccountManager();
-            IGrooveClient grooveClient = GrooveClientFactory.CreateGrooveClient(AzureDataMarketClientId, AzureDataMarketClientSecret, _userAccountManager);
+            IGrooveClient grooveClient = GrooveClientFactory.CreateGrooveClient(ApplicationClientId, ApplicationClientSecret, _userAccountManager);
 
             ErrorViewModel = new GrooveApiErrorViewModel();
             MusicContentPaneViewModel = new MusicContentPaneViewModel(grooveClient, ErrorViewModel);
@@ -74,7 +76,7 @@ namespace Microsoft.Groove.Api.Samples
             {
                 AccountsSettingsPane.Show();
             }
-            
+
             ((Button)sender).IsEnabled = true;
         }
 
@@ -112,8 +114,8 @@ namespace Microsoft.Groove.Api.Samples
             if (selectedTrack != null)
             {
                 await PlayerViewModel.PlayTrackAsync(
-                    selectedTrack, 
-                    _userAccountManager.UserIsSignedIn, 
+                    selectedTrack,
+                    _userAccountManager.UserIsSignedIn,
                     UserProfileViewModel.UserHasGrooveSubscription);
             }
         }
