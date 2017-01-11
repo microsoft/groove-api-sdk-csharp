@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="AuthenticationDataContract\MicrosoftAccountAuthenticationResponse.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="DataContract\Activity.cs" />
     <Compile Include="DataContract\Album.cs" />
     <Compile Include="DataContract\Artist.cs" />
     <Compile Include="DataContract\BaseResponse.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="DataContract\CollectionEdit\TrackActionType.cs" />
     <Compile Include="DataContract\CollectionState.cs" />
     <Compile Include="DataContract\Content.cs" />
+    <Compile Include="DataContract\ContentCategory.cs" />
     <Compile Include="DataContract\ContentItem.cs" />
     <Compile Include="DataContract\ContentResponse.cs" />
     <Compile Include="DataContract\Error.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="DataContract\GenericCollections.cs" />
     <Compile Include="DataContract\ItemType.cs" />
     <Compile Include="DataContract\MediaNamespace.cs" />
+    <Compile Include="DataContract\Mood.cs" />
     <Compile Include="DataContract\OrderBy.cs" />
     <Compile Include="DataContract\PaginatedList.cs" />
     <Compile Include="DataContract\Playlist.cs" />

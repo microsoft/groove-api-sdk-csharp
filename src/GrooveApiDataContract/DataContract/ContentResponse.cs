@@ -7,6 +7,7 @@
 
 namespace Microsoft.Groove.Api.DataContract
 {
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     [DataContract(Namespace = Constants.Xmlns)]
@@ -29,6 +30,12 @@ namespace Microsoft.Groove.Api.DataContract
 
         [DataMember(EmitDefaultValue = false)]
         public GenreList Genres { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public List<Mood> CatalogMoods { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public List<Activity> CatalogActivities { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public string Culture { get; set; }

@@ -194,6 +194,8 @@ namespace Microsoft.Groove.Api.Client
             ContentSource source,
             ItemType type,
             string genre = null,
+            string mood = null,
+            string activity = null,
             OrderBy? orderBy = null,
             int? maxItems = null,
             int? page = null,
@@ -205,6 +207,12 @@ namespace Microsoft.Groove.Api.Client
 
             if (genre != null)
                 requestParameters.Add("genre", genre);
+
+            if (mood != null)
+                requestParameters.Add("mood", genre);
+
+            if (activity != null)
+                requestParameters.Add("activity", genre);
 
             if (orderBy.HasValue)
                 requestParameters.Add("orderby", orderBy.ToString());
@@ -242,13 +250,15 @@ namespace Microsoft.Groove.Api.Client
             ContentSource source,
             ItemType type,
             string genre = null,
+            string mood = null,
+            string activity = null,
             OrderBy? orderBy = null,
             int? maxItems = null,
             int? page = null,
             string country = null,
             string language = null)
         {
-            return BrowseApiAsync(mediaNamespace, source, type, genre, orderBy, maxItems, page, country, language);
+            return BrowseApiAsync(mediaNamespace, source, type, genre, mood, activity, orderBy, maxItems, page, country, language);
         }
 
         public Task<ContentResponse> BrowseContinuationAsync(
@@ -369,20 +379,37 @@ namespace Microsoft.Groove.Api.Client
             return DiscoverAsync(mediaNamespace, "newreleases", country, language, genre);
         }
 
-        public async Task<ContentResponse> BrowseGenresAsync(
+        public Task<ContentResponse> BrowseGenresAsync(
             MediaNamespace mediaNamespace,
             string country = null,
             string language = null)
         {
+            return BrowseAsync(mediaNamespace, "genres", country, language);
+        }
+
+        public Task<ContentResponse> BrowseMoodsAsync(MediaNamespace mediaNamespace, string country, string language)
+        {
+            return BrowseAsync(mediaNamespace, "moods", country, language);
+        }
+
+        public Task<ContentResponse> BrowseActivitiesAsync(MediaNamespace mediaNamespace, string country, string language)
+        {
+            return BrowseAsync(mediaNamespace, "activities", country, language);
+        }
+
+        private async Task<ContentResponse> BrowseAsync(MediaNamespace mediaNamespace, string browseCategory, string country, string language)
+        {
             Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(language: language, country: country);
+
             return await GetAsync<ContentResponse>(
                 Hostname,
-                $"/1/content/{mediaNamespace}/catalog/genres",
+                $"/1/content/{mediaNamespace}/catalog/{browseCategory}",
                 new CancellationToken(false),
                 requestParameters,
                 requestHeaders);
         }
+
         #endregion
 
         #region Location
