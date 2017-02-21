@@ -9,22 +9,28 @@ namespace Microsoft.Groove.Api.Samples.ViewModels
 {
     using System;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+
+    using Windows.Media.Core;
+    using Windows.Media.Streaming.Adaptive;
+
     using Client;
     using DataContract;
     using Helpers;
 
     public class PlayerViewModel : INotifyPropertyChanged
     {
-        private string _streamUrl;
-        public string StreamUrl
+        private MediaSource _mediaSource;
+
+        public MediaSource MediaSource
         {
-            get {return _streamUrl;}
+            get { return _mediaSource; }
             set
             {
-                _streamUrl = value;
+                _mediaSource = value;
                 RaisePropertyChanged();
             }
         }
@@ -50,7 +56,7 @@ namespace Microsoft.Groove.Api.Samples.ViewModels
 
         public async Task PlayTrackAsync(Track track, bool userIsSignedIn, bool userHasSubscription)
         {
-            bool trackCanBeStreamed = track.Rights != null 
+            bool trackCanBeStreamed = track.Rights != null
                 && track.Rights.Any(right => right.Equals(StreamRight, StringComparison.OrdinalIgnoreCase));
 
             StreamResponse streamResponse = trackCanBeStreamed && userIsSignedIn && userHasSubscription
@@ -61,8 +67,30 @@ namespace Microsoft.Groove.Api.Samples.ViewModels
 
             if (!string.IsNullOrEmpty(streamResponse.Url))
             {
-                StreamUrl = streamResponse.Url;
+                MediaSource = await GetMediaSource(new Uri(streamResponse.Url), streamResponse.ContentType);
             }
+        }
+
+        private async Task<MediaSource> GetMediaSource(Uri streamUri, string contentType)
+        {
+            // Using AdaptiveMediaSource for HLS since MediaSource can fails to stream HLS on some versions of Windows.
+            // Root cause: User-Agent header mismatch between HLS manifest & fragment request
+            if (contentType == "application/vnd.apple.mpegurl")
+            {
+                AdaptiveMediaSourceCreationResult adaptiveMediaSourceCreation =
+                    await AdaptiveMediaSource.CreateFromUriAsync(streamUri);
+
+                if (adaptiveMediaSourceCreation.Status != AdaptiveMediaSourceCreationStatus.Success)
+                {
+                    Debug.WriteLine($"Error creating the AdaptiveMediaSource: {adaptiveMediaSourceCreation.Status}");
+
+                    return null;
+                }
+
+                return MediaSource.CreateFromAdaptiveMediaSource(adaptiveMediaSourceCreation.MediaSource);
+            }
+
+            return MediaSource.CreateFromUri(streamUri);
         }
     }
 }
