@@ -12,7 +12,6 @@
     <Page.Resources>
         <converters:SignInButtonTextConverter x:Key="SignInButtonTextConverter"/>
         <converters:ImageUrlSizeConverter x:Key="ImageUrlSizeConverter"/>
-        <converters:StreamUrlConverter x:Key="StreamUrlConverter"/>
         <converters:StringFormatConverter x:Key="StringFormatConverter"/>
         <Style TargetType="TextBlock"
                x:Key="DefaultText">
@@ -199,7 +198,7 @@
             <StackPanel Grid.Row="4">
                 <MediaPlayerElement AreTransportControlsEnabled="True" 
                                     AutoPlay="True" 
-                                    Source="{x:Bind Path=PlayerViewModel.StreamUrl, Mode=OneWay, Converter={StaticResource StreamUrlConverter}}" />
+                                    Source="{x:Bind Path=PlayerViewModel.MediaSource, Mode=OneWay}" />
             </StackPanel>
         </Grid>
     </Grid>

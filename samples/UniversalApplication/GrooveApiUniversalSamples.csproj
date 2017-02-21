@@ -101,7 +101,6 @@
     </Compile>
     <Compile Include="Converters\ImageUrlSizeConverter.cs" />
     <Compile Include="Converters\SignInButtonTextConverter.cs" />
-    <Compile Include="Converters\StreamUrlConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Helpers\StreamClientInstanceId.cs" />
     <Compile Include="MainPage.xaml.cs">
