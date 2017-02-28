@@ -516,6 +516,101 @@ namespace Microsoft.Groove.Api.Client
         }
         #endregion
 
+        #region Radio
+        public Task<RadioResponse> ContinueRadioAsync(
+            MediaNamespace mediaNamespace,
+            string id,
+            int? maxItems = null)
+        {
+            Dictionary<string, string> requestParameters = new Dictionary<string, string>();
+
+            if (maxItems.HasValue)
+                requestParameters.Add("maxitems", maxItems.ToString());
+
+            return ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                    headers => GetAsync<RadioResponse>(
+                    Hostname,
+                    $"/1/content/{mediaNamespace}/radio/{id}/next",
+                    new CancellationToken(false),
+                    requestParameters,
+                    headers));
+        }
+
+        public Task<RadioResponse> ContinueRadioAsync(
+            MediaNamespace mediaNamespace,
+            RadioResponse previousResponse,
+            int? maxItems = null)
+        {
+            if (previousResponse == null)
+            {
+                throw new ArgumentNullException(nameof(previousResponse));
+            }
+
+            return ContinueRadioAsync(mediaNamespace, previousResponse.SessionId, maxItems);
+        }
+
+        public Task<RadioResponse> ContinueRadioAsync(
+            MediaNamespace mediaNamespace,
+            Radio radio,
+            int? maxItems = null)
+        {
+            if (radio == null)
+            {
+                throw new ArgumentNullException(nameof(radio));
+            }
+
+            return ContinueRadioAsync(mediaNamespace, radio.Id, maxItems);
+        }
+
+        public Task<ContentResponse> GetRecentlyPlayedRadiosAsync(
+            MediaNamespace mediaNamespace,
+            int? maxItems = null,
+            int? page = null)
+        {
+            Dictionary<string, string> requestParameters = new Dictionary<string, string>();
+
+            if (page.HasValue)
+                requestParameters.Add("page", page.ToString());
+
+            if (maxItems.HasValue)
+                requestParameters.Add("maxitems", maxItems.ToString());
+
+            return ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                    headers => GetAsync<ContentResponse>(
+                    Hostname,
+                    $"/1/content/{mediaNamespace}/radio/recentlyplayed",
+                    new CancellationToken(false),
+                    requestParameters,
+                    headers));
+        }
+
+        public Task<RadioResponse> CreateRadioAsync(
+            MediaNamespace mediaNamespace,
+            CreateRadioRequest createRadioRequest,
+            int? maxItems = null)
+        {
+            if (createRadioRequest == null)
+            {
+                throw new ArgumentNullException(nameof(createRadioRequest));
+            }
+
+            Dictionary<string, string> requestParameters = new Dictionary<string, string>();
+
+            if (maxItems.HasValue)
+                requestParameters.Add("maxitems", maxItems.ToString());
+
+            return ApiCallWithUserAuthorizationHeaderRefreshAsync(
+                headers => PostAsync<RadioResponse, CreateRadioRequest>(
+                    Hostname,
+                    $"/1/content/{mediaNamespace}/radio/create",
+                    createRadioRequest,
+                    new CancellationToken(false),
+                    requestParameters,
+                    headers));
+        }
+
+        #endregion
+
         private async Task<TResponse> ApiCallWithUserAuthorizationHeaderRefreshAsync<TResponse>(
             Func<Dictionary<string, string>, Task<TResponse>> apiCall)
             where TResponse : BaseResponse

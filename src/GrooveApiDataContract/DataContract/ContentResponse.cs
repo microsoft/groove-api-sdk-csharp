@@ -9,7 +9,7 @@ namespace Microsoft.Groove.Api.DataContract
 {
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-
+    
     [DataContract(Namespace = Constants.Xmlns)]
     public class ContentResponse : BaseResponse
     {
@@ -24,6 +24,9 @@ namespace Microsoft.Groove.Api.DataContract
 
         [DataMember(EmitDefaultValue = false)]
         public PaginatedList<Playlist> Playlists { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public PaginatedList<Radio> Radios { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public PaginatedList<ContentItem> Results { get; set; }

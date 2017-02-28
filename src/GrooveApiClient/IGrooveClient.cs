@@ -306,5 +306,65 @@ namespace Microsoft.Groove.Api.Client
             MediaNamespace mediaNamespace,
             string language = null,
             string country = null);
+
+        /// <summary>
+        /// Continue a radio given its radio Id or session Id
+        /// </summary>
+        /// <param name="mediaNamespace">"music" only for now.</param>
+        /// <param name="id"></param>
+        /// <param name="maxItems">Max items in the response, between 1 and 25. Default value is 25.</param>
+        /// <returns></returns>
+        Task<RadioResponse> ContinueRadioAsync(
+            MediaNamespace mediaNamespace,
+            string id,
+            int? maxItems = null);
+
+        /// <summary>
+        /// Continue a radio given a previous radio response
+        /// </summary>
+        /// <param name="mediaNamespace">"music" only for now.</param>
+        /// <param name="previousResponse">previous radio response</param>
+        /// <param name="maxItems">Max items in the response, between 1 and 25. Default value is 25.</param>
+        /// <returns>radio tracks</returns>
+        Task<RadioResponse> ContinueRadioAsync(
+            MediaNamespace mediaNamespace,
+            RadioResponse previousResponse,
+            int? maxItems = null);
+
+        /// <summary>
+        /// Continue a radio given its recently played response
+        /// </summary>
+        /// <param name="mediaNamespace">"music" only for now.</param>
+        /// <param name="radio">recently played radio</param>
+        /// <param name="maxItems">Max items in the response, between 1 and 25. Default value is 25.</param>
+        /// <returns>radio tracks</returns>
+        Task<RadioResponse> ContinueRadioAsync(
+            MediaNamespace mediaNamespace,
+            Radio radio,
+            int? maxItems = null);
+
+        /// <summary>
+        /// Browse recently played radio stations
+        /// </summary>
+        /// <param name="mediaNamespace">"music" only for now.</param>
+        /// <param name="maxItems">Max items in the response, between 1 and 25. Default value is 25.</param>
+        /// <param name="page">Go directly to a given page. Page size is maxItems.</param>
+        /// <returns></returns>
+        Task<ContentResponse> GetRecentlyPlayedRadiosAsync(
+            MediaNamespace mediaNamespace,
+            int? maxItems = null,
+            int? page = null);
+
+        /// <summary>
+        /// Create a new radio station
+        /// </summary>
+        /// <param name="mediaNamespace">"music" only for now.</param>
+        /// <param name="createRadioRequest">the seed for the radio</param>
+        /// <param name="maxItems">Max items in the response, between 1 and 25. Default value is 25.</param>
+        /// <returns>a radio</returns>
+        Task<RadioResponse> CreateRadioAsync(
+            MediaNamespace mediaNamespace,
+            CreateRadioRequest createRadioRequest,
+            int? maxItems = null);
     }
 }
