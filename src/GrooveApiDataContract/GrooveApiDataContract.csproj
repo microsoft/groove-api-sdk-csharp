@@ -64,6 +64,7 @@
     <Compile Include="DataContract\ContentCategory.cs" />
     <Compile Include="DataContract\ContentItem.cs" />
     <Compile Include="DataContract\ContentResponse.cs" />
+    <Compile Include="DataContract\CreateRadioRequest.cs" />
     <Compile Include="DataContract\Error.cs" />
     <Compile Include="DataContract\ExtraDetails.cs" />
     <Compile Include="DataContract\GenericCollections.cs" />
@@ -73,6 +74,10 @@
     <Compile Include="DataContract\OrderBy.cs" />
     <Compile Include="DataContract\PaginatedList.cs" />
     <Compile Include="DataContract\Playlist.cs" />
+    <Compile Include="DataContract\Radio.cs" />
+    <Compile Include="DataContract\RadioResponse.cs" />
+    <Compile Include="DataContract\RadioSeed.cs" />
+    <Compile Include="DataContract\RadioSeedType.cs" />
     <Compile Include="DataContract\SearchFilter.cs" />
     <Compile Include="DataContract\StreamResponse.cs" />
     <Compile Include="DataContract\SubscriptionState.cs" />
