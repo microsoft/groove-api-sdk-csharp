@@ -60,5 +60,18 @@ namespace Microsoft.Groove.Api.Client.Tests
             Assert.IsNotNull(browseResults, "The browse response should not be null");
             AssertPaginatedListIsValid(browseResults.Playlists, 1);
         }
+
+        [TestMethod, TestCategory("Authenticated")]
+        public async Task BrowseUserPlaylistsForYou()
+        {
+            // Get all the user's playlists for you
+            ContentResponse browseResults = await UserAuthenticatedClient.BrowseAsync(
+                MediaNamespace.music,
+                ContentSource.Collection,
+                ItemType.PlaylistsForYou).Log();
+
+            Assert.IsNotNull(browseResults, "The browse response should not be null");
+            AssertPaginatedListIsValid(browseResults.Playlists, 1);
+        }
     }
 }
