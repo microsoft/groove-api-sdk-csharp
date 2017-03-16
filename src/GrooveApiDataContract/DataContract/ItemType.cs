@@ -21,6 +21,8 @@ namespace Microsoft.Groove.Api.DataContract
         Playlists = 3,
         [EnumMember]
         Tracks = 4,
+        [EnumMember]
+        PlaylistsForYou = 5,
         AlbumOrTrack = 42
     }
 }
