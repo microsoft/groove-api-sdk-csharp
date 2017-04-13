@@ -70,6 +70,7 @@
     <Compile Include="DataContract\GenericCollections.cs" />
     <Compile Include="DataContract\ItemType.cs" />
     <Compile Include="DataContract\MediaNamespace.cs" />
+    <Compile Include="DataContract\Genre.cs" />
     <Compile Include="DataContract\Mood.cs" />
     <Compile Include="DataContract\OrderBy.cs" />
     <Compile Include="DataContract\PaginatedList.cs" />

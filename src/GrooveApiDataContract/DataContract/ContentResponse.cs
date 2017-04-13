@@ -32,7 +32,7 @@ namespace Microsoft.Groove.Api.DataContract
         public PaginatedList<ContentItem> Results { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public GenreList Genres { get; set; }
+        public List<Genre> CatalogGenres { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public List<Mood> CatalogMoods { get; set; }

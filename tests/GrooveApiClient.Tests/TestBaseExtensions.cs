@@ -35,8 +35,8 @@ namespace Microsoft.Groove.Api.Client.Tests
         }
 
         private static async Task<TResponse> LogResponse<TResponse>(
-            this Task<TResponse> responseTask, 
-            Action<TResponse> log) 
+            this Task<TResponse> responseTask,
+            Action<TResponse> log)
             where TResponse : BaseResponse
         {
             TResponse response = await responseTask;
@@ -79,7 +79,7 @@ namespace Microsoft.Groove.Api.Client.Tests
                     {
                         Console.WriteLine($"  {content.GetType().Name} {content.Id}: {content.Name}, " +
                                           $"{string.Join(" and ", album.Artists.Select(contributor => contributor.Artist.Name))}");
-                    } 
+                    }
                     else if (track != null)
                     {
                         Console.WriteLine($"  {content.GetType().Name} {content.Id}: {content.Name}, {track.Album.Name}, " +
@@ -109,11 +109,11 @@ namespace Microsoft.Groove.Api.Client.Tests
                     }
                 }
 
-                if (response.Genres != null)
+                if (response.CatalogGenres != null)
                 {
-                    foreach (string genre in response.Genres)
+                    foreach (Genre genre in response.CatalogGenres)
                     {
-                        Console.WriteLine($" Genre: {genre}");
+                        Console.WriteLine($" Genre: {genre.Name}");
                     }
                 }
             });
