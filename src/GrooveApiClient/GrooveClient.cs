@@ -384,7 +384,7 @@ namespace Microsoft.Groove.Api.Client
             string country = null,
             string language = null)
         {
-            return BrowseAsync(mediaNamespace, "genres", country, language);
+            return BrowseAsync(mediaNamespace, "genres", country, language, 3);
         }
 
         public Task<ContentResponse> BrowseMoodsAsync(MediaNamespace mediaNamespace, string country, string language)
@@ -397,14 +397,14 @@ namespace Microsoft.Groove.Api.Client
             return BrowseAsync(mediaNamespace, "activities", country, language);
         }
 
-        private async Task<ContentResponse> BrowseAsync(MediaNamespace mediaNamespace, string browseCategory, string country, string language)
+        private async Task<ContentResponse> BrowseAsync(MediaNamespace mediaNamespace, string browseCategory, string country, string language, int apiVersion = 1)
         {
             Dictionary<string, string> requestHeaders = await FormatRequestHeadersAsync(null);
             Dictionary<string, string> requestParameters = await FormatRequestParametersAsync(language: language, country: country);
 
             return await GetAsync<ContentResponse>(
                 Hostname,
-                $"/1/content/{mediaNamespace}/catalog/{browseCategory}",
+                $"/{apiVersion}/content/{mediaNamespace}/catalog/{browseCategory}",
                 new CancellationToken(false),
                 requestParameters,
                 requestHeaders);

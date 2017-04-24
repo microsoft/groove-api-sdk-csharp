@@ -219,7 +219,7 @@ namespace Microsoft.Groove.Api.Client
         /// <param name="mediaNamespace">"music" only for now</param>
         /// <param name="country">ISO 2 letter code</param>
         /// <param name="language">ISO 2 letter code</param>
-        /// <returns>Response.Genres contains the list of genres for your locale</returns>
+        /// <returns>Response.CatalogGenres contains the list of genres for your locale</returns>
         Task<ContentResponse> BrowseGenresAsync(
             MediaNamespace mediaNamespace,
             string country = null,

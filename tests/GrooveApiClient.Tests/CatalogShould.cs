@@ -97,8 +97,8 @@ namespace Microsoft.Groove.Api.Client.Tests
             ContentResponse genreResults = await Client.BrowseGenresAsync(MediaNamespace.music).Log();
             Assert.IsNotNull(genreResults, "The browse response should not be null");
             Console.WriteLine($"Culture: {genreResults.Culture}");
-            Assert.IsNotNull(genreResults.Genres, "The browse response should contain genres");
-            Assert.IsTrue(0 < genreResults.Genres.Count, "The browse response should contain at least one genre");
+            Assert.IsNotNull(genreResults.CatalogGenres, "The browse response should contain genres");
+            Assert.IsTrue(0 < genreResults.CatalogGenres.Count, "The browse response should contain at least one genre");
             Assert.IsNotNull(genreResults.Culture, "The genre response should contain the applicable culture");
         }
 

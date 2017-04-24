@@ -17,22 +17,22 @@ namespace Microsoft.Groove.Api.DataContract
     public class GenreList : List<string>
     {
         public GenreList()
-        {}
+        { }
 
         public GenreList(IEnumerable<string> collection)
             : base(collection)
-        {}
+        { }
     }
 
     [CollectionDataContract(Namespace = Constants.Xmlns, ItemName = "Right")]
     public class RightList : List<string>
     {
         public RightList()
-        {}
+        { }
 
         public RightList(IEnumerable<string> collection)
             : base(collection)
-        {}
+        { }
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:Mark ISerializable types with SerializableAttribute", Justification = "SerializableAttribute does not exist in Portable .NET")]
@@ -40,21 +40,21 @@ namespace Microsoft.Groove.Api.DataContract
     public class IdDictionary : Dictionary<string, string>
     {
         public IdDictionary()
-        {}
+        { }
 
         public IdDictionary(IDictionary<string, string> dictionary)
             : base(dictionary)
-        {}
+        { }
     }
 
     [CollectionDataContract(Namespace = Constants.Xmlns, ItemName = "TrackId")]
     public class TrackIdList : List<string>
     {
         public TrackIdList()
-        {}
+        { }
 
         public TrackIdList(IEnumerable<string> collection)
             : base(collection)
-        {}
+        { }
     }
 }
