@@ -79,12 +79,12 @@ namespace Microsoft.Groove.Api.Client.Tests
             // Get playlists with mood "Chill" for country FR
             ContentResponse browseMoodResult = await Client.BrowseAsync(MediaNamespace.music, ContentSource.Catalog, ItemType.Playlists, mood: "Chill", country: "FR").Log();
             Assert.IsNotNull(browseMoodResult, "The browse response should not be null");
-            AssertPaginatedListIsValid(browseMoodResult.Playlists, 25, 100);
+            AssertPaginatedListIsValid(browseMoodResult.Playlists, 10, 20);
 
             // Get playlists with activity "Party" for country US
             ContentResponse browseActivityResults = await Client.BrowseAsync(MediaNamespace.music, ContentSource.Catalog, ItemType.Playlists, activity: "Party", country: "US").Log();
             Assert.IsNotNull(browseActivityResults, "The browse response should not be null");
-            AssertPaginatedListIsValid(browseActivityResults.Playlists, 25, 100);
+            AssertPaginatedListIsValid(browseActivityResults.Playlists, 25, 40);
         }
 
         [TestMethod, TestCategory("Unauthenticated")]

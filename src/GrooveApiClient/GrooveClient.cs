@@ -209,10 +209,10 @@ namespace Microsoft.Groove.Api.Client
                 requestParameters.Add("genre", genre);
 
             if (mood != null)
-                requestParameters.Add("mood", genre);
+                requestParameters.Add("mood", mood);
 
             if (activity != null)
-                requestParameters.Add("activity", genre);
+                requestParameters.Add("activity", activity);
 
             if (orderBy.HasValue)
                 requestParameters.Add("orderby", orderBy.ToString());
