@@ -30,8 +30,8 @@ namespace Microsoft.Groove.Api.Client.Tests
             Console.WriteLine($"Artist page deep link: {artistPageDeepLink}");
             Assert.IsNotNull(artistPageDeepLink, "The artist page deep link should not be null");
 
-            // Create a link which starts playback of Katy Perry's latest album in the US (exclude singles and EPs)
-            Album album = artist.Albums.Items.First(a => a.AlbumType == "Album");
+            // Create a link which starts playback of Katy Perry's latest album in the US
+            Album album = artist.Albums.Items.First();
             string albumPlayDeepLink = album.GetLink(ContentExtensions.LinkAction.Play);
             Console.WriteLine($"Album play deep link: {albumPlayDeepLink}");
             Assert.IsNotNull(albumPlayDeepLink, "The album play deep link should not be null");
